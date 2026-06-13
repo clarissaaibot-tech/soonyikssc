@@ -712,22 +712,22 @@ body {
       <div class="section-label">Project Pipeline</div>
       <div class="pipeline-grid">
 
-        <div class="project-card decision">
+        <div class="project-card pending">
           <div style="flex:1; min-width:0;">
             <div class="project-name">Catherine F&B</div>
             <div class="project-meta">餐饮 · Ready to Eat</div>
-            <div class="next-action">→ 安排第3次内部会议做GO决定</div>
+            <div class="next-action">📅 20/6 开会后才有财务数据</div>
           </div>
-          <span class="status-badge badge-decision">待决定</span>
+          <span class="status-badge badge-pending">等开会</span>
         </div>
 
         <div class="project-card conditional">
           <div style="flex:1; min-width:0;">
             <div class="project-name">ZXL Interior Design</div>
             <div class="project-meta">室内设计平台 · Soon Yik 70%</div>
-            <div class="next-action">→ 等对方确认入股架构</div>
+            <div class="next-action">⏳ 等定开会时间</div>
           </div>
-          <span class="status-badge badge-conditional">待确认</span>
+          <span class="status-badge badge-conditional">等时间</span>
         </div>
 
         <div class="project-card pending">
@@ -757,20 +757,20 @@ body {
   <div class="center-col">
 
     <div class="decision-hero">
-      <div class="decision-urgency">⚡ 需要你做决定</div>
+      <div class="decision-urgency">⏳ 下一个关键节点</div>
       <div class="decision-company">Catherine F&B</div>
-      <div class="decision-industry">餐饮 · Ready to Eat · 估值待定</div>
-      <div class="decision-question">财务数据已整理完毕。<br>现在要做 GO 还是 否决？</div>
+      <div class="decision-industry">餐饮 · Ready to Eat</div>
+      <div class="decision-question">等20/6开会后才有财务数据<br>开了会才能做 GO / NO 决定</div>
       <div class="decision-cards">
-        <div class="decision-card go" id="btn-go" onclick="triggerGo()">
-          <div class="decision-icon">✅</div>
-          <div class="decision-label">GO</div>
-          <div class="decision-sub">签协议・成立合资公司<br>进入SSC落地体系</div>
+        <div class="decision-card go" style="opacity:0.5; cursor:default;">
+          <div class="decision-icon">📅</div>
+          <div class="decision-label" style="color:var(--muted);">20/6</div>
+          <div class="decision-sub">开会日期<br>财务数据待确认</div>
         </div>
-        <div class="decision-card no" id="btn-no" onclick="triggerNo()">
-          <div class="decision-icon">✗</div>
-          <div class="decision-label">否决</div>
-          <div class="decision-sub">条件谈不拢/风险太高<br>终止项目</div>
+        <div class="decision-card no" style="opacity:0.5; cursor:default;">
+          <div class="decision-icon">⏳</div>
+          <div class="decision-label" style="color:var(--muted);">ZXL</div>
+          <div class="decision-sub">等对方定时间<br>股权架构待确认</div>
         </div>
       </div>
     </div>
@@ -782,23 +782,23 @@ body {
 
         <div class="action-item">
           <div class="action-num">01</div>
-          <div class="action-title">安排 Catherine F&B 第3次内部会议</div>
-          <div class="action-owner">Soon Yik · 全团队</div>
-          <div class="action-tag">本周</div>
+          <div class="action-title">Catherine F&B — 等 20/6 开会拿财务数据</div>
+          <div class="action-owner">Soon Yik · Clarissa记录</div>
+          <div class="action-tag">20/6</div>
         </div>
 
         <div class="action-item">
           <div class="action-num">02</div>
-          <div class="action-title">安排 Yi Kuang Tourism 第1次见面</div>
-          <div class="action-owner">Soon Yik · Clarissa记录</div>
-          <div class="action-tag">本周</div>
+          <div class="action-title">ZXL — 等对方定开会时间 + 股权架构</div>
+          <div class="action-owner">Terrence + Kah Sheng</div>
+          <div class="action-tag">待对方</div>
         </div>
 
         <div class="action-item">
           <div class="action-num">03</div>
-          <div class="action-title">等 ZXL 发来入股架构方案</div>
-          <div class="action-owner">Terrence + Kah Sheng</div>
-          <div class="action-tag">待对方</div>
+          <div class="action-title">Yi Kuang Tourism — 安排第1次见面</div>
+          <div class="action-owner">Soon Yik · Clarissa记录</div>
+          <div class="action-tag">本周</div>
         </div>
 
         <div class="action-item">
@@ -897,8 +897,8 @@ body {
         <div class="footer-stat-label">在谈项目</div>
       </div>
       <div class="footer-stat">
-        <div class="footer-stat-num magenta">1</div>
-        <div class="footer-stat-label">待决定</div>
+        <div class="footer-stat-num amber">2</div>
+        <div class="footer-stat-label">等开会</div>
       </div>
       <div class="footer-stat">
         <div class="footer-stat-num gold">0</div>
@@ -912,25 +912,16 @@ body {
     <div class="footer-right">资源共享 · 标准落地 · 系统变现</div>
   </div>
 
-</div>
-
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-inner">
-    <div class="ticker-item">SSC STATUS: <span>OPERATIONAL</span></div>
-    <div class="ticker-item">PROJECTS: <span>4 ACTIVE</span></div>
-    <div class="ticker-item">ZXL ID: <span>AWAITING RESPONSE</span></div>
-    <div class="ticker-item">CATHERINE F&B: <span>PENDING DECISION</span></div>
-    <div class="ticker-item">YI KUANG: <span>FIRST MEETING PENDING</span></div>
-    <div class="ticker-item">ANKPET: <span>ON HOLD</span></div>
-    <div class="ticker-item">NEXT MEETING: <span>TBD</span></div>
-    <div class="ticker-item">SSC STATUS: <span>OPERATIONAL</span></div>
-    <div class="ticker-item">PROJECTS: <span>4 ACTIVE</span></div>
-    <div class="ticker-item">ZXL ID: <span>AWAITING RESPONSE</span></div>
-    <div class="ticker-item">CATHERINE F&B: <span>PENDING DECISION</span></div>
-    <div class="ticker-item">YI KUANG: <span>FIRST MEETING PENDING</span></div>
-    <div class="ticker-item">ANKPET: <span>ON HOLD</span></div>
-    <div class="ticker-item">NEXT MEETING: <span>TBD</span></div>
+    <div class="ticker-item">CATHERINE F&B: <span>等20/6开会</span></div>
+    <div class="ticker-item">ZXL ID: <span>等定时间</span></div>
+    <div class="ticker-item">YI KUANG: <span>等第1次见面</span></div>
+    <div class="ticker-item">ANKPET: <span>暂停</span></div>
+    <div class="ticker-item">SSC STATUS: <span>WAITING — NO ACTIVE DECISION</span></div>
+    <div class="ticker-item">CATHERINE F&B: <span>等20/6开会</span></div>
+    <div class="ticker-item">ZXL ID: <span>等定时间</span></div>
+    <div class="ticker-item">YI KUANG: <span>等第1次见面</span></div>
+    <div class="ticker-item">ANKPET: <span>暂停</span></div>
+    <div class="ticker-item">SSC STATUS: <span>WAITING — NO ACTIVE DECISION</span></div>
   </div>
 </div>
 
