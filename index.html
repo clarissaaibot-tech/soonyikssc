@@ -27,14 +27,32 @@
 
 * { margin:0; padding:0; box-sizing:border-box; }
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Exo 2', sans-serif;
-  overflow: hidden;
-  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100vw;
-  user-select: none;
+  height: 100vh;
+}
+
+/* Constrain to 16:9, letterbox on non-16:9 */
+.container {
+  position: relative;
+  width: 100vw;
+  height: 56.25vw; /* 9/16 = 0.5625 */
+  max-height: 100vh;
+  max-width: 177.78vh; /* 16/9 = 1.7778 */
+  margin: auto;
+  overflow: hidden;
 }
 
 #bg-canvas {
@@ -84,9 +102,9 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto 1fr auto;
-  height: 100vh;
-  padding: 20px 24px;
-  gap: 16px;
+  height: 100%;
+  padding: 1.2vw 1.5vw;
+  gap: 1vw;
 }
 
 /* ── HEADER ── */
@@ -100,7 +118,7 @@ body {
 
 .logo-text {
   font-family: 'Orbitron', monospace;
-  font-size: 52px; font-weight: 900;
+  font-size: 3.2vw; font-weight: 900;
   letter-spacing: 0.06em;
   color: var(--cyan);
   text-shadow: 0 0 16px var(--cyan-glow), 0 0 50px rgba(0,245,255,0.15);
@@ -109,16 +127,16 @@ body {
 
 .logo-sub {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 12px; color: var(--muted);
+  font-size: 0.7vw; color: var(--muted);
   letter-spacing: 0.2em; text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 0.25vw;
 }
 
 .header-right { text-align: right; }
 
 .clock {
   font-family: 'Orbitron', monospace;
-  font-size: 72px; font-weight: 700;
+  font-size: 4.5vw; font-weight: 700;
   color: var(--text);
   letter-spacing: 0.04em; line-height: 1;
   text-shadow: 0 0 30px rgba(255,255,255,0.08);
@@ -126,17 +144,17 @@ body {
 
 .date-str {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 13px; color: var(--muted);
-  letter-spacing: 0.15em; margin-top: 4px;
+  font-size: 0.7vw; color: var(--muted);
+  letter-spacing: 0.15em; margin-top: 0.2vw;
 }
 
 .status-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-top: 8px; justify-content: flex-end;
+  display: flex; align-items: center; gap: 0.5vw;
+  margin-top: 0.5vw; justify-content: flex-end;
 }
 
 .status-dot {
-  width: 8px; height: 8px; border-radius: 50%;
+  width: 0.5vw; height: 0.5vw; border-radius: 50%;
   background: var(--green);
   box-shadow: 0 0 8px var(--green-glow);
   animation: pulse-dot 2s ease-in-out infinite;
@@ -149,7 +167,7 @@ body {
 
 .status-text {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px; color: var(--green);
+  font-size: 0.6vw; color: var(--green);
   letter-spacing: 0.12em;
 }
 
@@ -160,8 +178,8 @@ body {
   flex: 1;
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.12);
-  border-radius: 16px;
-  padding: 28px;
+  border-radius: 1vw;
+  padding: 1.8vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -180,20 +198,20 @@ body {
 
 .money-label {
   font-family: 'Orbitron', monospace;
-  font-size: 11px; font-weight: 600;
+  font-size: 0.65vw; font-weight: 600;
   letter-spacing: 0.25em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 12px;
-  display: flex; align-items: center; gap: 8px;
+  color: var(--muted); margin-bottom: 0.8vw;
+  display: flex; align-items: center; gap: 0.5vw;
 }
 
 .money-label::before {
-  content: ''; width: 24px; height: 1px;
+  content: ''; width: 1.5vw; height: 1px;
   background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow);
 }
 
 .money-amount {
   font-family: 'Orbitron', monospace;
-  font-size: 88px; font-weight: 900;
+  font-size: 5.5vw; font-weight: 900;
   color: var(--cyan);
   text-shadow: 0 0 20px var(--cyan-glow), 0 0 60px rgba(0,245,255,0.2);
   line-height: 1; letter-spacing: 0.02em;
@@ -207,19 +225,19 @@ body {
 
 .money-sub {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 14px; color: var(--muted);
-  margin-top: 10px; letter-spacing: 0.08em;
+  font-size: 0.8vw; color: var(--muted);
+  margin-top: 0.6vw; letter-spacing: 0.08em;
 }
 
 .money-detail {
-  display: flex; gap: 32px; margin-top: 20px;
+  display: flex; gap: 2vw; margin-top: 1.2vw;
 }
 
 .money-detail-item {}
 
 .money-detail-num {
   font-family: 'Orbitron', monospace;
-  font-size: 28px; font-weight: 700;
+  font-size: 1.8vw; font-weight: 700;
   color: var(--text); line-height: 1;
 }
 
@@ -229,9 +247,9 @@ body {
 
 .money-detail-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; color: var(--muted);
+  font-size: 0.55vw; color: var(--muted);
   letter-spacing: 0.1em; text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 0.25vw;
 }
 
 /* ── PROJECT PIPELINE ── */
@@ -239,27 +257,27 @@ body {
 
 .section-label {
   font-family: 'Orbitron', monospace;
-  font-size: 10px; font-weight: 600;
+  font-size: 0.6vw; font-weight: 600;
   letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
+  color: var(--muted); margin-bottom: 0.6vw;
+  display: flex; align-items: center; gap: 0.5vw;
 }
 
 .section-label::before {
-  content: ''; width: 20px; height: 1px;
+  content: ''; width: 1.2vw; height: 1px;
   background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow);
 }
 
 .pipeline-grid {
-  display: flex; flex-direction: column; gap: 8px; flex: 1;
+  display: flex; flex-direction: column; gap: 0.5vw; flex: 1;
 }
 
 .project-card {
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 10px;
-  padding: 14px 16px;
-  display: flex; align-items: center; gap: 12px;
+  border-radius: 0.6vw;
+  padding: 0.9vw 1vw;
+  display: flex; align-items: center; gap: 0.8vw;
   position: relative; overflow: hidden;
   transition: all 0.3s;
   animation: slide-in 0.4s ease-out forwards;
@@ -272,7 +290,7 @@ body {
 .project-card:nth-child(4) { animation-delay: 0.4s; }
 
 @keyframes slide-in {
-  from { opacity:0; transform:translateX(-12px); }
+  from { opacity:0; transform:translateX(-0.6vw); }
   to   { opacity:1; transform:translateX(0); }
 }
 
@@ -289,23 +307,23 @@ body {
 .project-card:hover { background:rgba(0,245,255,0.06); border-color:rgba(0,245,255,0.25); }
 
 .project-name {
-  font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 2px;
+  font-size: 1.1vw; font-weight: 600; color: var(--text); margin-bottom: 0.1vw;
 }
 
 .project-meta {
-  font-size: 12px; color: var(--muted); font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7vw; color: var(--muted); font-family: 'Share Tech Mono', monospace;
 }
 
 .next-action {
-  font-size: 12px; color: var(--cyan); margin-top: 4px;
+  font-size: 0.7vw; color: var(--cyan); margin-top: 0.25vw;
   font-family: 'Share Tech Mono', monospace;
 }
 
 .status-badge {
   font-family: 'Orbitron', monospace;
-  font-size: 9px; font-weight: 600;
+  font-size: 0.55vw; font-weight: 600;
   letter-spacing: 0.15em; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 3px; flex-shrink: 0;
+  padding: 0.25vw 0.6vw; border-radius: 3px; flex-shrink: 0;
 }
 
 .badge-conditional { background:rgba(255,149,0,0.15); color:var(--amber); border:1px solid rgba(255,149,0,0.3); }
@@ -314,14 +332,14 @@ body {
 .badge-onhold      { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid rgba(255,255,255,0.1); }
 
 /* ── CENTER: GO / NO-GO ── */
-.center-col { display:flex; flex-direction:column; gap:16px; }
+.center-col { display:flex; flex-direction:column; gap:1vw; }
 
 .decision-hero {
   flex: 1;
   background: rgba(255,0,170,0.03);
   border: 1px solid rgba(255,0,170,0.15);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 1vw;
+  padding: 1.5vw;
   display: flex; flex-direction: column;
   justify-content: center;
   position: relative; overflow: hidden;
@@ -337,12 +355,12 @@ body {
 
 .decision-urgency {
   font-family: 'Orbitron', monospace;
-  font-size: 10px; font-weight: 600;
+  font-size: 0.6vw; font-weight: 600;
   letter-spacing: 0.25em; text-transform: uppercase;
   color: var(--magenta);
   text-shadow: 0 0 8px rgba(255,0,170,0.4);
-  margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 0.6vw;
+  display: flex; align-items: center; gap: 0.5vw;
   animation: blink 1.5s ease-in-out infinite;
 }
 
@@ -352,37 +370,37 @@ body {
 }
 
 .decision-urgency::before {
-  content: '●'; font-size: 8px;
+  content: '●'; font-size: 0.5vw;
 }
 
 .decision-company {
   font-family: 'Orbitron', monospace;
-  font-size: 52px; font-weight: 900;
+  font-size: 3.2vw; font-weight: 900;
   color: var(--text);
   text-shadow: 0 0 20px rgba(255,255,255,0.1);
   line-height: 1; letter-spacing: 0.02em;
-  margin-bottom: 6px;
+  margin-bottom: 0.4vw;
 }
 
 .decision-industry {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 14px; color: var(--muted);
-  letter-spacing: 0.1em; margin-bottom: 20px;
+  font-size: 0.8vw; color: var(--muted);
+  letter-spacing: 0.1em; margin-bottom: 1.2vw;
 }
 
 .decision-question {
-  font-size: 16px; font-weight: 500;
-  color: var(--text); margin-bottom: 20px;
+  font-size: 0.95vw; font-weight: 500;
+  color: var(--text); margin-bottom: 1.2vw;
   line-height: 1.4;
 }
 
 .decision-cards {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.8vw;
 }
 
 .decision-card {
-  border-radius: 12px; padding: 20px;
-  text-align: center; cursor: pointer;
+  border-radius: 0.8vw; padding: 1.2vw;
+  text-align: center;
   border: 2px solid;
   transition: all 0.3s;
   position: relative; overflow: hidden;
@@ -402,20 +420,20 @@ body {
 .decision-card:hover.no { background:rgba(255,45,85,0.1); box-shadow:0 0 30px rgba(255,45,85,0.2); }
 
 .decision-icon {
-  font-size: 36px; margin-bottom: 10px;
+  font-size: 2.2vw; margin-bottom: 0.6vw;
   filter: drop-shadow(0 0 8px currentColor);
 }
 
 .decision-label {
   font-family: 'Orbitron', monospace;
-  font-size: 28px; font-weight: 700; margin-bottom: 6px;
+  font-size: 1.8vw; font-weight: 700; margin-bottom: 0.4vw;
 }
 
 .decision-card.go .decision-label { color:var(--green); text-shadow:0 0 12px var(--green-glow); }
 .decision-card.no .decision-label { color:var(--red); text-shadow:0 0 12px var(--red-glow); }
 
 .decision-sub {
-  font-size: 11px; color: var(--muted);
+  font-size: 0.65vw; color: var(--muted);
   font-family: 'Share Tech Mono', monospace; line-height: 1.4;
 }
 
@@ -423,20 +441,20 @@ body {
 .actions-section {
   background: rgba(0,245,255,0.02);
   border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 12px; padding: 16px;
+  border-radius: 0.8vw; padding: 1vw;
 }
 
 .actions-list {
-  display: flex; flex-direction: column; gap: 6px;
-  margin-top: 10px;
+  display: flex; flex-direction: column; gap: 0.4vw;
+  margin-top: 0.6vw;
 }
 
 .action-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
+  display: flex; align-items: center; gap: 0.6vw;
+  padding: 0.6vw 0.8vw;
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.08);
-  border-radius: 6px;
+  border-radius: 0.4vw;
   border-left: 2px solid var(--cyan);
   animation: slide-in 0.4s ease-out forwards;
   opacity: 0;
@@ -449,73 +467,73 @@ body {
 
 .action-num {
   font-family: 'Orbitron', monospace;
-  font-size: 14px; font-weight: 700;
+  font-size: 0.85vw; font-weight: 700;
   color: var(--cyan);
   text-shadow: 0 0 8px var(--cyan-glow);
-  min-width: 26px;
+  min-width: 1.6vw;
 }
 
 .action-title {
-  font-size: 14px; font-weight: 400; color: var(--text); flex: 1;
+  font-size: 0.85vw; font-weight: 400; color: var(--text); flex: 1;
 }
 
 .action-owner {
-  font-size: 11px; color: var(--muted);
+  font-size: 0.65vw; color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
 }
 
 .action-tag {
   font-family: 'Orbitron', monospace;
-  font-size: 9px; font-weight: 600;
+  font-size: 0.5vw; font-weight: 600;
   letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 3px;
+  padding: 0.2vw 0.5vw; border-radius: 3px;
   background: rgba(0,245,255,0.1);
   color: var(--cyan); border: 1px solid rgba(0,245,255,0.2);
   white-space: nowrap;
 }
 
 /* ── RIGHT: TEAM ── */
-.right-col { display:flex; flex-direction:column; gap:16px; }
+.right-col { display:flex; flex-direction:column; gap:1vw; }
 
 .team-section {
   flex: 1;
   background: rgba(0,245,255,0.02);
   border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 12px; padding: 16px;
+  border-radius: 0.8vw; padding: 1vw;
 }
 
 .team-grid {
   display: grid; grid-template-columns: 1fr 1fr;
-  gap: 6px; margin-top: 10px;
+  gap: 0.4vw; margin-top: 0.6vw;
 }
 
 .team-member {
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.08);
-  border-radius: 8px; padding: 10px 12px;
-  display: flex; align-items: center; gap: 8px;
+  border-radius: 0.5vw; padding: 0.6vw 0.8vw;
+  display: flex; align-items: center; gap: 0.5vw;
 }
 
 .member-avatar {
-  width: 34px; height: 34px; border-radius: 6px;
+  width: 2.1vw; height: 2.1vw; border-radius: 0.4vw;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Orbitron', monospace;
-  font-size: 11px; font-weight: 700; flex-shrink: 0;
+  font-size: 0.65vw; font-weight: 700; flex-shrink: 0;
 }
 
 .member-name {
-  font-size: 13px; font-weight: 500; color: var(--text);
+  font-size: 0.8vw; font-weight: 500; color: var(--text);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .member-role {
-  font-size: 10px; color: var(--muted);
+  font-size: 0.6vw; color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .member-status {
-  width: 7px; height: 7px; border-radius: 50%;
+  width: 0.45vw; height: 0.45vw; border-radius: 50%;
   flex-shrink: 0; margin-left: auto;
 }
 
@@ -527,16 +545,16 @@ body {
 .stages-section {
   background: rgba(0,245,255,0.02);
   border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 12px; padding: 16px;
+  border-radius: 0.8vw; padding: 1vw;
 }
 
 .stages-track {
-  display: flex; gap: 6px; margin-top: 10px;
+  display: flex; gap: 0.4vw; margin-top: 0.6vw;
 }
 
 .stage-block {
   flex: 1; text-align: center;
-  padding: 10px 4px; border-radius: 6px;
+  padding: 0.6vw 0.25vw; border-radius: 0.4vw;
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.08);
 }
@@ -549,11 +567,11 @@ body {
 
 .stage-num {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; color: var(--muted); margin-bottom: 4px;
+  font-size: 0.55vw; color: var(--muted); margin-bottom: 0.25vw;
 }
 
 .stage-name {
-  font-size: 11px; font-weight: 500; color: var(--text); line-height: 1.2;
+  font-size: 0.65vw; font-weight: 500; color: var(--text); line-height: 1.2;
 }
 
 .stage-block.active .stage-name { color: var(--cyan); }
@@ -562,13 +580,13 @@ body {
 .footer {
   grid-column: 1 / -1;
   display: flex; align-items: center;
-  justify-content: space-between; padding: 0 4px;
+  justify-content: space-between; padding: 0 0.25vw;
 }
 
 .footer-stats { display: flex; align-items: center; }
 
 .footer-stat {
-  text-align: center; padding: 0 28px;
+  text-align: center; padding: 0 1.8vw;
   position: relative;
 }
 
@@ -580,7 +598,7 @@ body {
 
 .footer-stat-num {
   font-family: 'Orbitron', monospace;
-  font-size: 36px; font-weight: 700; line-height: 1;
+  font-size: 2.2vw; font-weight: 700; line-height: 1;
 }
 
 .footer-stat-num.cyan   { color:var(--cyan);   text-shadow:0 0 12px var(--cyan-glow); }
@@ -590,35 +608,35 @@ body {
 
 .footer-stat-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; color: var(--muted);
+  font-size: 0.55vw; color: var(--muted);
   letter-spacing: 0.1em; text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 0.25vw;
 }
 
 .footer-right {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 12px; color: rgba(0,245,255,0.25);
+  font-size: 0.65vw; color: rgba(0,245,255,0.25);
   letter-spacing: 0.1em;
 }
 
 /* ── TICKER ── */
 .ticker {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  height: 28px;
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1.8vw;
   background: rgba(0,245,255,0.04);
   border-top: 1px solid rgba(0,245,255,0.12);
   display: flex; align-items: center; overflow: hidden; z-index: 4;
 }
 
 .ticker-inner {
-  display: flex; gap: 60px;
+  display: flex; gap: 3.5vw;
   animation: ticker-scroll 25s linear infinite;
   white-space: nowrap;
 }
 
 .ticker-item {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px; color: var(--muted);
+  font-size: 0.65vw; color: var(--muted);
   letter-spacing: 0.08em;
 }
 
@@ -630,42 +648,18 @@ body {
 }
 
 /* ── SOUND BUTTON ── */
-#sound-toggle {
-  position: fixed; top: 16px; right: 16px;
-  z-index: 10;
-  background: rgba(0,245,255,0.08);
-  border: 1px solid rgba(0,245,255,0.2);
-  border-radius: 8px;
-  color: var(--cyan);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px; letter-spacing: 0.1em;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-#sound-toggle:hover {
-  background: rgba(0,245,255,0.15);
-  box-shadow: 0 0 16px rgba(0,245,255,0.2);
-}
-
-#sound-toggle.active {
-  background: rgba(0,255,136,0.1);
-  border-color: rgba(0,255,136,0.3);
-  color: var(--green);
-}
+/* removed */
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div class="grid-floor"></div>
-<div class="scanline"></div>
-<div class="grain"></div>
+<div class="container">
+  <div id="bg-canvas"></div>
+  <div class="grid-floor"></div>
+  <div class="scanline"></div>
+  <div class="grain"></div>
 
-<button id="sound-toggle">🔇 SOUND OFF</button>
-
-<div class="screen">
+  <div class="screen">
 
   <!-- HEADER -->
   <div class="header">
@@ -925,14 +919,14 @@ body {
   </div>
 </div>
 
+</div><!-- end .screen -->
+</div><!-- end .container -->
+
 <script>
 // ════════════════════════════════════════
 //  SOUND ENGINE (Web Audio API)
 // ════════════════════════════════════════
 let audioCtx = null;
-let soundEnabled = false;
-let ambientOsc = null;
-let ambientGain = null;
 
 function initAudio() {
   if (audioCtx) return;
@@ -940,7 +934,7 @@ function initAudio() {
 }
 
 function playTone(freq, type, duration, vol) {
-  if (!soundEnabled || !audioCtx) return;
+  if (!audioCtx) return;
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.type = type;
@@ -953,106 +947,32 @@ function playTone(freq, type, duration, vol) {
   osc.stop(audioCtx.currentTime + duration);
 }
 
-function playGoSound() {
-  if (!soundEnabled || !audioCtx) return;
-  // Ascending triumphant chord
-  [523, 659, 784, 1047].forEach((f, i) => {
-    setTimeout(() => playTone(f, 'sine', 0.8, 0.15), i * 80);
-  });
-  // Bass confirm
-  setTimeout(() => playTone(130, 'triangle', 1.2, 0.1), 300);
-  // UI click
-  playTone(1200, 'square', 0.05, 0.05);
-}
-
-function playNoSound() {
-  if (!soundEnabled || !audioCtx) return;
-  // Descending reject
-  [400, 300, 200].forEach((f, i) => {
-    setTimeout(() => playTone(f, 'sawtooth', 0.4, 0.08), i * 120);
-  });
-  playTone(150, 'square', 0.3, 0.06);
-}
-
-function playClickSound() {
-  if (!soundEnabled || !audioCtx) return;
-  playTone(800, 'sine', 0.08, 0.06);
-}
-
-function playTickSound() {
-  if (!soundEnabled || !audioCtx) return;
-  playTone(1200, 'sine', 0.04, 0.03);
-}
-
-function startAmbient() {
-  if (!audioCtx || ambientOsc) return;
-  ambientOsc = audioCtx.createOscillator();
-  ambientGain = audioCtx.createGain();
-  ambientOsc.type = 'sine';
-  ambientOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // low A
-  ambientGain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-  ambientOsc.connect(ambientGain);
-  ambientGain.connect(audioCtx.destination);
-  ambientOsc.start();
+function playAmbient() {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(55, audioCtx.currentTime);
+  gain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
   // Subtle pulse
   setInterval(() => {
-    if (!soundEnabled || !ambientGain) return;
-    ambientGain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+    if (!audioCtx) return;
+    gain.gain.setValueAtTime(0.008, audioCtx.currentTime);
     setTimeout(() => {
-      if (!soundEnabled || !ambientGain) return;
-      ambientGain.gain.setValueAtTime(0.025, audioCtx.currentTime);
+      if (!audioCtx) return;
+      gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
     }, 2000);
   }, 4000);
 }
 
-function stopAmbient() {
-  if (ambientOsc) { ambientOsc.stop(); ambientOsc = null; ambientGain = null; }
-}
-
-// Sound toggle
-const soundBtn = document.getElementById('sound-toggle');
-soundBtn.addEventListener('click', () => {
+// Init ambient on first interaction
+document.addEventListener('click', () => {
   initAudio();
-  soundEnabled = !soundEnabled;
-  if (soundEnabled) {
-    soundBtn.textContent = '🔊 SOUND ON';
-    soundBtn.classList.add('active');
-    startAmbient();
-    playClickSound();
-  } else {
-    soundBtn.textContent = '🔇 SOUND OFF';
-    soundBtn.classList.remove('active');
-    stopAmbient();
-  }
-});
-
-// GO / NO buttons
-function triggerGo() {
-  initAudio();
-  soundEnabled = true;
-  playGoSound();
-  const card = document.getElementById('btn-go');
-  card.style.boxShadow = '0 0 60px rgba(0,255,136,0.5)';
-  setTimeout(() => { card.style.boxShadow = ''; }, 2000);
-}
-
-function triggerNo() {
-  initAudio();
-  soundEnabled = true;
-  playNoSound();
-  const card = document.getElementById('btn-no');
-  card.style.boxShadow = '0 0 60px rgba(255,45,85,0.5)';
-  setTimeout(() => { card.style.boxShadow = ''; }, 2000);
-}
-
-// Click on project cards
-document.querySelectorAll('.project-card').forEach(card => {
-  card.addEventListener('click', () => {
-    initAudio();
-    if (!soundEnabled) return;
-    playClickSound();
-  });
-});
+  playAmbient();
+}, { once: true });
 
 // ════════════════════════════════════════
 //  CLOCK
@@ -1101,7 +1021,11 @@ const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 let W, H, particles = [];
 
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+function resize() {
+  const c = document.querySelector('.container');
+  W = canvas.width = c.offsetWidth;
+  H = canvas.height = c.offsetHeight;
+}
 resize();
 window.addEventListener('resize', resize);
 
