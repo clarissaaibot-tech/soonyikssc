@@ -9,21 +9,20 @@
 
 :root {
   --cyan: #00f5ff;
-  --cyan-dim: rgba(0,245,255,0.12);
-  --cyan-glow: rgba(0,245,255,0.4);
+  --cyan-dim: rgba(0,245,255,0.1);
+  --cyan-glow: rgba(0,245,255,0.5);
   --magenta: #ff00aa;
-  --magenta-dim: rgba(255,0,170,0.12);
-  --magenta-glow: rgba(255,0,170,0.4);
+  --magenta-dim: rgba(255,0,170,0.1);
   --gold: #f5c842;
-  --gold-glow: rgba(245,200,66,0.4);
-  --amber: #ff9500;
+  --gold-glow: rgba(245,200,66,0.5);
   --green: #00ff88;
+  --green-glow: rgba(0,255,136,0.5);
   --red: #ff2d55;
+  --red-glow: rgba(255,45,85,0.5);
+  --amber: #ff9500;
   --bg: #03030a;
-  --panel: rgba(0,245,255,0.04);
-  --panel-border: rgba(0,245,255,0.15);
   --text: #e8f4f8;
-  --muted: rgba(0,245,255,0.45);
+  --muted: rgba(0,245,255,0.4);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -35,107 +34,59 @@ body {
   overflow: hidden;
   height: 100vh;
   width: 100vw;
+  user-select: none;
 }
 
-/* ── CANVAS BG ── */
 #bg-canvas {
-  position: fixed;
-  top: 0; left: 0;
+  position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: 0;
 }
 
-/* ── GRID FLOOR ── */
 .grid-floor {
-  position: fixed;
-  bottom: 0; left: 0;
-  width: 100%; height: 45%;
+  position: fixed; bottom: 0; left: 0;
+  width: 100%; height: 40%;
   background:
-    linear-gradient(to top, rgba(0,245,255,0.06) 0%, transparent 100%),
-    repeating-linear-gradient(
-      90deg,
-      rgba(0,245,255,0.08) 0px,
-      rgba(0,245,255,0.08) 1px,
-      transparent 1px,
-      transparent 80px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      rgba(0,245,255,0.08) 0px,
-      rgba(0,245,255,0.08) 1px,
-      transparent 1px,
-      transparent 80px
-    );
-  transform: perspective(600px) rotateX(55deg);
+    linear-gradient(to top, rgba(0,245,255,0.05) 0%, transparent 100%),
+    repeating-linear-gradient(90deg, rgba(0,245,255,0.1) 0px, rgba(0,245,255,0.1) 1px, transparent 1px, transparent 100px),
+    repeating-linear-gradient(0deg, rgba(0,245,255,0.1) 0px, rgba(0,245,255,0.1) 1px, transparent 1px, transparent 100px);
+  transform: perspective(500px) rotateX(60deg);
   transform-origin: bottom center;
   z-index: 0;
-  animation: grid-scroll 20s linear infinite;
+  animation: grid-scroll 25s linear infinite;
 }
 
 @keyframes grid-scroll {
   from { background-position: 0 0, 0 0, 0 0; }
-  to   { background-position: 0 80px, 0 80px, 0 80px; }
+  to   { background-position: 0 100px, 0 100px, 0 100px; }
 }
 
-/* ── SCAN LINE ── */
 .scanline {
-  position: fixed;
-  top: 0; left: 0;
+  position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.03) 2px,
-    rgba(0,0,0,0.03) 4px
-  );
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
   pointer-events: none;
   z-index: 3;
 }
 
-/* ── MAIN LAYOUT ── */
+.grain {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── MAIN ── */
 .screen {
-  position: relative;
-  z-index: 2;
+  position: relative; z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto 1fr auto;
   height: 100vh;
   padding: 20px 24px;
   gap: 16px;
-}
-
-/* ── GLASS PANEL ── */
-.glass {
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: 12px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  position: relative;
-  overflow: hidden;
-}
-
-.glass::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
-}
-
-/* ── NEON TEXT ── */
-.neon-cyan {
-  color: var(--cyan);
-  text-shadow: 0 0 8px var(--cyan-glow), 0 0 20px rgba(0,245,255,0.2);
-}
-.neon-magenta {
-  color: var(--magenta);
-  text-shadow: 0 0 8px var(--magenta-glow), 0 0 20px rgba(255,0,170,0.2);
-}
-.neon-gold {
-  color: var(--gold);
-  text-shadow: 0 0 8px var(--gold-glow);
 }
 
 /* ── HEADER ── */
@@ -147,135 +98,171 @@ body {
   padding: 0 4px;
 }
 
-.logo-block {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
 .logo-text {
   font-family: 'Orbitron', monospace;
-  font-size: 48px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-size: 52px; font-weight: 900;
+  letter-spacing: 0.06em;
   color: var(--cyan);
-  text-shadow: 0 0 12px var(--cyan-glow), 0 0 40px rgba(0,245,255,0.15);
+  text-shadow: 0 0 16px var(--cyan-glow), 0 0 50px rgba(0,245,255,0.15);
   line-height: 1;
 }
 
 .logo-sub {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
-  color: var(--muted);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-size: 12px; color: var(--muted);
+  letter-spacing: 0.2em; text-transform: uppercase;
   margin-top: 4px;
 }
 
-.logo-star {
-  font-size: 36px;
-  animation: star-pulse 3s ease-in-out infinite;
-}
-
-@keyframes star-pulse {
-  0%, 100% { opacity: 1; text-shadow: 0 0 12px var(--gold-glow); }
-  50% { opacity: 0.5; text-shadow: 0 0 4px var(--gold-glow); }
-}
-
-.header-right {
-  text-align: right;
-}
+.header-right { text-align: right; }
 
 .clock {
   font-family: 'Orbitron', monospace;
-  font-size: 64px;
-  font-weight: 700;
+  font-size: 72px; font-weight: 700;
   color: var(--text);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  text-shadow: 0 0 20px rgba(255,255,255,0.1);
+  letter-spacing: 0.04em; line-height: 1;
+  text-shadow: 0 0 30px rgba(255,255,255,0.08);
 }
 
 .date-str {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 14px;
-  color: var(--muted);
-  letter-spacing: 0.12em;
-  margin-top: 4px;
+  font-size: 13px; color: var(--muted);
+  letter-spacing: 0.15em; margin-top: 4px;
 }
 
-.status-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  justify-content: flex-end;
+.status-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 8px; justify-content: flex-end;
 }
 
 .status-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
+  width: 8px; height: 8px; border-radius: 50%;
   background: var(--green);
-  box-shadow: 0 0 6px var(--green);
-  animation: blink 2s ease-in-out infinite;
+  box-shadow: 0 0 8px var(--green-glow);
+  animation: pulse-dot 2s ease-in-out infinite;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.4; transform:scale(0.7); }
 }
 
 .status-text {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: var(--green);
-  letter-spacing: 0.1em;
+  font-size: 11px; color: var(--green);
+  letter-spacing: 0.12em;
 }
 
-/* ── LEFT COLUMN ── */
-.left-col { display: flex; flex-direction: column; gap: 16px; }
+/* ── LEFT: BIG MONEY ── */
+.left-col { display:flex; flex-direction:column; gap:16px; }
 
-/* ── PIPELINE ── */
+.money-hero {
+  flex: 1;
+  background: rgba(0,245,255,0.03);
+  border: 1px solid rgba(0,245,255,0.12);
+  border-radius: 16px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.money-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  box-shadow: 0 0 20px var(--cyan-glow);
+}
+
+.money-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.money-label::before {
+  content: ''; width: 24px; height: 1px;
+  background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow);
+}
+
+.money-amount {
+  font-family: 'Orbitron', monospace;
+  font-size: 88px; font-weight: 900;
+  color: var(--cyan);
+  text-shadow: 0 0 20px var(--cyan-glow), 0 0 60px rgba(0,245,255,0.2);
+  line-height: 1; letter-spacing: 0.02em;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%,100% { text-shadow: 0 0 20px var(--cyan-glow), 0 0 60px rgba(0,245,255,0.2); }
+  50% { text-shadow: 0 0 30px var(--cyan-glow), 0 0 80px rgba(0,245,255,0.3); }
+}
+
+.money-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px; color: var(--muted);
+  margin-top: 10px; letter-spacing: 0.08em;
+}
+
+.money-detail {
+  display: flex; gap: 32px; margin-top: 20px;
+}
+
+.money-detail-item {}
+
+.money-detail-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px; font-weight: 700;
+  color: var(--text); line-height: 1;
+}
+
+.money-detail-num.gold { color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); }
+.money-detail-num.green { color: var(--green); text-shadow: 0 0 10px var(--green-glow); }
+.money-detail-num.amber { color: var(--amber); text-shadow: 0 0 10px rgba(255,149,0,0.4); }
+
+.money-detail-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ── PROJECT PIPELINE ── */
+.pipeline-section { flex: 1; display:flex; flex-direction:column; }
+
 .section-label {
   font-family: 'Orbitron', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
-  padding-left: 2px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
 }
 
 .section-label::before {
-  content: '';
-  width: 20px; height: 1px;
-  background: var(--cyan);
-  box-shadow: 0 0 6px var(--cyan-glow);
+  content: ''; width: 20px; height: 1px;
+  background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow);
 }
 
 .pipeline-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  display: flex; flex-direction: column; gap: 8px; flex: 1;
 }
 
 .project-card {
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-  overflow: hidden;
+  display: flex; align-items: center; gap: 12px;
+  position: relative; overflow: hidden;
   transition: all 0.3s;
-  animation: card-in 0.5s ease-out forwards;
+  animation: slide-in 0.4s ease-out forwards;
   opacity: 0;
 }
 
@@ -284,160 +271,174 @@ body {
 .project-card:nth-child(3) { animation-delay: 0.3s; }
 .project-card:nth-child(4) { animation-delay: 0.4s; }
 
-@keyframes card-in {
-  from { opacity: 0; transform: translateX(-10px); }
-  to   { opacity: 1; transform: translateX(0); }
+@keyframes slide-in {
+  from { opacity:0; transform:translateX(-12px); }
+  to   { opacity:1; transform:translateX(0); }
 }
 
 .project-card::after {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
+  content: ''; position: absolute;
+  left:0; top:0; bottom:0; width:3px;
 }
 
-.project-card.conditional::after { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
-.project-card.pending::after   { background: var(--cyan);  box-shadow: 0 0 8px var(--cyan); }
-.project-card.decision::after { background: var(--magenta); box-shadow: 0 0 8px var(--magenta); }
-.project-card.onhold::after   { background: rgba(255,255,255,0.15); }
+.project-card.conditional::after { background:var(--amber); box-shadow:0 0 10px var(--amber); }
+.project-card.pending::after    { background:var(--cyan);  box-shadow:0 0 10px var(--cyan); }
+.project-card.decision::after    { background:var(--magenta); box-shadow:0 0 10px var(--magenta); }
+.project-card.onhold::after    { background:rgba(255,255,255,0.1); }
 
-.project-card:hover {
-  background: rgba(0,245,255,0.06);
-  border-color: rgba(0,245,255,0.25);
-}
+.project-card:hover { background:rgba(0,245,255,0.06); border-color:rgba(0,245,255,0.25); }
 
 .project-name {
-  font-family: 'Exo 2', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 2px;
+  font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 2px;
 }
 
 .project-meta {
-  font-size: 12px;
-  color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; color: var(--muted); font-family: 'Share Tech Mono', monospace;
 }
 
 .next-action {
-  font-size: 12px;
-  color: var(--cyan);
-  margin-top: 4px;
+  font-size: 12px; color: var(--cyan); margin-top: 4px;
   font-family: 'Share Tech Mono', monospace;
 }
 
 .status-badge {
   font-family: 'Orbitron', monospace;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 3px;
-  flex-shrink: 0;
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 3px; flex-shrink: 0;
 }
 
-.badge-conditional { background: rgba(255,149,0,0.15); color: var(--amber); border: 1px solid rgba(255,149,0,0.3); }
-.badge-pending     { background: rgba(0,245,255,0.1);  color: var(--cyan);   border: 1px solid rgba(0,245,255,0.25); }
-.badge-decision    { background: rgba(255,0,170,0.1); color: var(--magenta); border: 1px solid rgba(255,0,170,0.25); }
-.badge-onhold      { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid rgba(255,255,255,0.1); }
+.badge-conditional { background:rgba(255,149,0,0.15); color:var(--amber); border:1px solid rgba(255,149,0,0.3); }
+.badge-pending     { background:rgba(0,245,255,0.1);  color:var(--cyan);   border:1px solid rgba(0,245,255,0.25); }
+.badge-decision    { background:rgba(255,0,170,0.1); color:var(--magenta); border:1px solid rgba(255,0,170,0.25); }
+.badge-onhold      { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid rgba(255,255,255,0.1); }
 
-/* ── PROCESS ── */
-.process-section {
+/* ── CENTER: GO / NO-GO ── */
+.center-col { display:flex; flex-direction:column; gap:16px; }
+
+.decision-hero {
+  flex: 1;
+  background: rgba(255,0,170,0.03);
+  border: 1px solid rgba(255,0,170,0.15);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  position: relative; overflow: hidden;
+}
+
+.decision-hero::before {
+  content: '';
+  position: absolute; top:0; left:0; right:0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--magenta), transparent);
+  box-shadow: 0 0 20px rgba(255,0,170,0.4);
+}
+
+.decision-urgency {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--magenta);
+  text-shadow: 0 0 8px rgba(255,0,170,0.4);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,100% { opacity:1; }
+  50% { opacity:0.4; }
+}
+
+.decision-urgency::before {
+  content: '●'; font-size: 8px;
+}
+
+.decision-company {
+  font-family: 'Orbitron', monospace;
+  font-size: 52px; font-weight: 900;
+  color: var(--text);
+  text-shadow: 0 0 20px rgba(255,255,255,0.1);
+  line-height: 1; letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+
+.decision-industry {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px; color: var(--muted);
+  letter-spacing: 0.1em; margin-bottom: 20px;
+}
+
+.decision-question {
+  font-size: 16px; font-weight: 500;
+  color: var(--text); margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.decision-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+
+.decision-card {
+  border-radius: 12px; padding: 20px;
+  text-align: center; cursor: pointer;
+  border: 2px solid;
+  transition: all 0.3s;
+  position: relative; overflow: hidden;
+}
+
+.decision-card.go {
+  border-color: rgba(0,255,136,0.4);
+  background: rgba(0,255,136,0.05);
+}
+
+.decision-card.no {
+  border-color: rgba(255,45,85,0.4);
+  background: rgba(255,45,85,0.05);
+}
+
+.decision-card:hover.go { background:rgba(0,255,136,0.1); box-shadow:0 0 30px rgba(0,255,136,0.2); }
+.decision-card:hover.no { background:rgba(255,45,85,0.1); box-shadow:0 0 30px rgba(255,45,85,0.2); }
+
+.decision-icon {
+  font-size: 36px; margin-bottom: 10px;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.decision-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px; font-weight: 700; margin-bottom: 6px;
+}
+
+.decision-card.go .decision-label { color:var(--green); text-shadow:0 0 12px var(--green-glow); }
+.decision-card.no .decision-label { color:var(--red); text-shadow:0 0 12px var(--red-glow); }
+
+.decision-sub {
+  font-size: 11px; color: var(--muted);
+  font-family: 'Share Tech Mono', monospace; line-height: 1.4;
+}
+
+/* ── ACTION LIST ── */
+.actions-section {
   background: rgba(0,245,255,0.02);
   border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 12px;
-  padding: 16px;
-  position: relative;
+  border-radius: 12px; padding: 16px;
 }
 
-.process-steps {
-  display: flex;
-  gap: 0;
-  margin-top: 12px;
-  position: relative;
-}
-
-.step {
-  flex: 1;
-  text-align: center;
-  position: relative;
-  padding: 0 2px;
-}
-
-.step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  top: 16px;
-  left: 55%;
-  right: -45%;
-  height: 1px;
-  background: linear-gradient(90deg, var(--cyan-glow), rgba(0,245,255,0.1));
-}
-
-.step-num {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Orbitron', monospace;
-  font-size: 12px;
-  font-weight: 700;
-  margin: 0 auto 8px;
-  position: relative;
-  z-index: 1;
-}
-
-.step.active .step-num {
-  background: var(--cyan);
-  color: var(--bg);
-  box-shadow: 0 0 12px var(--cyan-glow), 0 0 30px rgba(0,245,255,0.2);
-}
-
-.step.pending .step-num {
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid rgba(0,245,255,0.2);
-}
-
-.step-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text);
-  margin-bottom: 2px;
-}
-
-.step-sub {
-  font-size: 10px;
-  color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-  line-height: 1.3;
-}
-
-/* ── CENTER COLUMN ── */
-.center-col { display: flex; flex-direction: column; gap: 16px; }
-
-/* ── ACTIONS ── */
 .actions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 12px;
-  flex: 1;
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: 10px;
 }
 
 .action-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: flex; align-items: center; gap: 10px;
   padding: 10px 12px;
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.08);
   border-radius: 6px;
   border-left: 2px solid var(--cyan);
-  animation: card-in 0.4s ease-out forwards;
+  animation: slide-in 0.4s ease-out forwards;
   opacity: 0;
 }
 
@@ -445,174 +446,97 @@ body {
 .action-item:nth-child(2) { animation-delay: 0.25s; }
 .action-item:nth-child(3) { animation-delay: 0.35s; }
 .action-item:nth-child(4) { animation-delay: 0.45s; }
-.action-item:nth-child(5) { animation-delay: 0.55s; }
 
 .action-num {
   font-family: 'Orbitron', monospace;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px; font-weight: 700;
   color: var(--cyan);
-  min-width: 24px;
   text-shadow: 0 0 8px var(--cyan-glow);
+  min-width: 26px;
 }
 
 .action-title {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text);
-  flex: 1;
+  font-size: 14px; font-weight: 400; color: var(--text); flex: 1;
 }
 
 .action-owner {
-  font-size: 11px;
-  color: var(--muted);
+  font-size: 11px; color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
 }
 
 .action-tag {
   font-family: 'Orbitron', monospace;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 3px;
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 3px;
   background: rgba(0,245,255,0.1);
-  color: var(--cyan);
-  border: 1px solid rgba(0,245,255,0.2);
+  color: var(--cyan); border: 1px solid rgba(0,245,255,0.2);
   white-space: nowrap;
 }
 
-/* ── GO DECISION ── */
-.decision-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 12px;
+/* ── RIGHT: TEAM ── */
+.right-col { display:flex; flex-direction:column; gap:16px; }
+
+.team-section {
+  flex: 1;
+  background: rgba(0,245,255,0.02);
+  border: 1px solid rgba(0,245,255,0.1);
+  border-radius: 12px; padding: 16px;
 }
 
-.decision-card {
-  background: rgba(0,245,255,0.03);
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-  border: 1px solid;
-  transition: all 0.3s;
-}
-
-.decision-card.go {
-  border-color: rgba(0,255,136,0.3);
-  background: rgba(0,255,136,0.03);
-}
-
-.decision-card.no {
-  border-color: rgba(255,45,85,0.3);
-  background: rgba(255,45,85,0.03);
-}
-
-.decision-icon {
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-
-.decision-label {
-  font-family: 'Orbitron', monospace;
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.decision-card.go .decision-label {
-  color: var(--green);
-  text-shadow: 0 0 10px rgba(0,255,136,0.4);
-}
-
-.decision-card.no .decision-label {
-  color: var(--red);
-  text-shadow: 0 0 10px rgba(255,45,85,0.4);
-}
-
-.decision-sub {
-  font-size: 11px;
-  color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-  line-height: 1.4;
-}
-
-/* ── RIGHT COLUMN ── */
-.right-col { display: flex; flex-direction: column; gap: 16px; }
-
-/* ── TEAM ── */
 .team-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-top: 12px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px; margin-top: 10px;
 }
 
 .team-member {
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.08);
-  border-radius: 8px;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  border-radius: 8px; padding: 10px 12px;
+  display: flex; align-items: center; gap: 8px;
 }
 
 .member-avatar {
-  width: 34px; height: 34px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 34px; height: 34px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
   font-family: 'Orbitron', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
 }
 
 .member-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 13px; font-weight: 500; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .member-role {
-  font-size: 10px;
-  color: var(--muted);
+  font-size: 10px; color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .member-status {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  margin-left: auto;
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0; margin-left: auto;
 }
 
-.s-green { background: var(--green); box-shadow: 0 0 6px var(--green); animation: blink 2s ease-in-out infinite; }
-.s-yellow { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
-.s-gray { background: rgba(255,255,255,0.2); }
+.s-green  { background:var(--green);  box-shadow:0 0 6px var(--green-glow);  animation:pulse-dot 2s ease-in-out infinite; }
+.s-yellow { background:var(--amber); box-shadow:0 0 6px rgba(255,149,0,0.5); }
+.s-gray   { background:rgba(255,255,255,0.2); }
 
 /* ── 4 STAGES ── */
+.stages-section {
+  background: rgba(0,245,255,0.02);
+  border: 1px solid rgba(0,245,255,0.1);
+  border-radius: 12px; padding: 16px;
+}
+
 .stages-track {
-  display: flex;
-  gap: 6px;
-  margin-top: 12px;
+  display: flex; gap: 6px; margin-top: 10px;
 }
 
 .stage-block {
-  flex: 1;
-  text-align: center;
-  padding: 10px 4px;
-  border-radius: 6px;
+  flex: 1; text-align: center;
+  padding: 10px 4px; border-radius: 6px;
   background: rgba(0,245,255,0.03);
   border: 1px solid rgba(0,245,255,0.08);
 }
@@ -625,16 +549,11 @@ body {
 
 .stage-num {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  margin-bottom: 4px;
+  font-size: 10px; color: var(--muted); margin-bottom: 4px;
 }
 
 .stage-name {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1.2;
+  font-size: 11px; font-weight: 500; color: var(--text); line-height: 1.2;
 }
 
 .stage-block.active .stage-name { color: var(--cyan); }
@@ -642,100 +561,98 @@ body {
 /* ── FOOTER ── */
 .footer {
   grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4px;
+  display: flex; align-items: center;
+  justify-content: space-between; padding: 0 4px;
 }
 
-.footer-stats {
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
+.footer-stats { display: flex; align-items: center; }
 
 .footer-stat {
-  text-align: center;
-  padding: 0 24px;
+  text-align: center; padding: 0 28px;
   position: relative;
 }
 
 .footer-stat:not(:last-child)::after {
-  content: '';
-  position: absolute;
+  content: ''; position: absolute;
   right: 0; top: 20%; bottom: 20%;
-  width: 1px;
-  background: rgba(0,245,255,0.15);
+  width: 1px; background: rgba(0,245,255,0.12);
 }
 
 .footer-stat-num {
   font-family: 'Orbitron', monospace;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1;
+  font-size: 36px; font-weight: 700; line-height: 1;
 }
 
-.footer-stat-num.cyan { color: var(--cyan); text-shadow: 0 0 10px var(--cyan-glow); }
-.footer-stat-num.magenta { color: var(--magenta); text-shadow: 0 0 10px var(--magenta-glow); }
-.footer-stat-num.gold { color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); }
-.footer-stat-num.green { color: var(--green); text-shadow: 0 0 10px rgba(0,255,136,0.4); }
+.footer-stat-num.cyan   { color:var(--cyan);   text-shadow:0 0 12px var(--cyan-glow); }
+.footer-stat-num.magenta{ color:var(--magenta);text-shadow:0 0 12px rgba(255,0,170,0.4); }
+.footer-stat-num.gold  { color:var(--gold);   text-shadow:0 0 12px var(--gold-glow); }
+.footer-stat-num.green { color:var(--green);  text-shadow:0 0 12px var(--green-glow); }
 
 .footer-stat-label {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-top: 3px;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-top: 4px;
 }
 
 .footer-right {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  color: rgba(0,245,255,0.3);
+  font-size: 12px; color: rgba(0,245,255,0.25);
   letter-spacing: 0.1em;
 }
 
-/* ── LIVE DATA TICKER ── */
+/* ── TICKER ── */
 .ticker {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
+  position: fixed; bottom: 0; left: 0; right: 0;
   height: 28px;
-  background: rgba(0,245,255,0.05);
-  border-top: 1px solid rgba(0,245,255,0.15);
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  z-index: 4;
+  background: rgba(0,245,255,0.04);
+  border-top: 1px solid rgba(0,245,255,0.12);
+  display: flex; align-items: center; overflow: hidden; z-index: 4;
 }
 
 .ticker-inner {
-  display: flex;
-  gap: 60px;
-  animation: ticker-scroll 30s linear infinite;
+  display: flex; gap: 60px;
+  animation: ticker-scroll 25s linear infinite;
   white-space: nowrap;
 }
 
 .ticker-item {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
+  font-size: 11px; color: var(--muted);
   letter-spacing: 0.08em;
 }
 
-.ticker-item span {
-  color: var(--cyan);
+.ticker-item span { color: var(--cyan); }
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
-/* ── GRAIN ── */
-.grain {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+/* ── SOUND BUTTON ── */
+#sound-toggle {
+  position: fixed; top: 16px; right: 16px;
+  z-index: 10;
+  background: rgba(0,245,255,0.08);
+  border: 1px solid rgba(0,245,255,0.2);
+  border-radius: 8px;
+  color: var(--cyan);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#sound-toggle:hover {
+  background: rgba(0,245,255,0.15);
+  box-shadow: 0 0 16px rgba(0,245,255,0.2);
+}
+
+#sound-toggle.active {
+  background: rgba(0,255,136,0.1);
+  border-color: rgba(0,255,136,0.3);
+  color: var(--green);
 }
 </style>
 </head>
@@ -746,39 +663,68 @@ body {
 <div class="scanline"></div>
 <div class="grain"></div>
 
+<button id="sound-toggle">🔇 SOUND OFF</button>
+
 <div class="screen">
 
   <!-- HEADER -->
   <div class="header">
-    <div class="logo-block">
-      <div>
-        <div class="logo-text">SSC JARVIS</div>
-        <div class="logo-sub">Share Service Centre · Command Center</div>
-      </div>
-      <div class="logo-star neon-gold">★</div>
+    <div>
+      <div class="logo-text">SSC JARVIS</div>
+      <div class="logo-sub">Share Service Centre · Command Center</div>
     </div>
     <div class="header-right">
       <div class="clock" id="clock">--:--</div>
       <div class="date-str" id="dateStr">---</div>
-      <div class="status-bar">
+      <div class="status-row">
         <div class="status-dot"></div>
         <div class="status-text">SYSTEM ONLINE</div>
       </div>
     </div>
   </div>
 
-  <!-- LEFT COLUMN -->
+  <!-- LEFT: MONEY + PIPELINE -->
   <div class="left-col">
 
+    <!-- MONEY HERO -->
+    <div class="money-hero">
+      <div class="money-label">Portfolio 总估值</div>
+      <div class="money-amount" id="money-display">RM 0</div>
+      <div class="money-sub">4 个在谈项目 · 潜在投资组合</div>
+      <div class="money-detail">
+        <div class="money-detail-item">
+          <div class="money-detail-num gold">RM 0</div>
+          <div class="money-detail-label">Catherine F&B</div>
+        </div>
+        <div class="money-detail-item">
+          <div class="money-detail-num green">RM 0</div>
+          <div class="money-detail-label">ZXL Interior</div>
+        </div>
+        <div class="money-detail-item">
+          <div class="money-detail-num amber">RM 0</div>
+          <div class="money-detail-label">Yi Kuang</div>
+        </div>
+      </div>
+    </div>
+
     <!-- PIPELINE -->
-    <div class="glass pipeline-section">
+    <div class="pipeline-section">
       <div class="section-label">Project Pipeline</div>
       <div class="pipeline-grid">
+
+        <div class="project-card decision">
+          <div style="flex:1; min-width:0;">
+            <div class="project-name">Catherine F&B</div>
+            <div class="project-meta">餐饮 · Ready to Eat</div>
+            <div class="next-action">→ 安排第3次内部会议做GO决定</div>
+          </div>
+          <span class="status-badge badge-decision">待决定</span>
+        </div>
 
         <div class="project-card conditional">
           <div style="flex:1; min-width:0;">
             <div class="project-name">ZXL Interior Design</div>
-            <div class="project-meta">室内设计平台 · Soon Yik 70% / ZXL 30%</div>
+            <div class="project-meta">室内设计平台 · Soon Yik 70%</div>
             <div class="next-action">→ 等对方确认入股架构</div>
           </div>
           <span class="status-badge badge-conditional">待确认</span>
@@ -793,15 +739,6 @@ body {
           <span class="status-badge badge-pending">待见面</span>
         </div>
 
-        <div class="project-card decision">
-          <div style="flex:1; min-width:0;">
-            <div class="project-name">Catherine F&B</div>
-            <div class="project-meta">餐饮 · Ready to Eat · 待做GO决定</div>
-            <div class="next-action">→ 安排第3次内部会议</div>
-          </div>
-          <span class="status-badge badge-decision">待决定</span>
-        </div>
-
         <div class="project-card onhold">
           <div style="flex:1; min-width:0;">
             <div class="project-name">AnkPet Pet — Dog</div>
@@ -814,35 +751,32 @@ body {
       </div>
     </div>
 
-    <!-- 3-STEP PROCESS -->
-    <div class="process-section">
-      <div class="section-label">项目三步推进法</div>
-      <div class="process-steps">
-        <div class="step active">
-          <div class="step-num">1</div>
-          <div class="step-label">第1次见面</div>
-          <div class="step-sub">Soon Yik + Clarissa<br>建立关系・摸底</div>
+  </div>
+
+  <!-- CENTER: GO / NO-GO -->
+  <div class="center-col">
+
+    <div class="decision-hero">
+      <div class="decision-urgency">⚡ 需要你做决定</div>
+      <div class="decision-company">Catherine F&B</div>
+      <div class="decision-industry">餐饮 · Ready to Eat · 估值待定</div>
+      <div class="decision-question">财务数据已整理完毕。<br>现在要做 GO 还是 否决？</div>
+      <div class="decision-cards">
+        <div class="decision-card go" id="btn-go" onclick="triggerGo()">
+          <div class="decision-icon">✅</div>
+          <div class="decision-label">GO</div>
+          <div class="decision-sub">签协议・成立合资公司<br>进入SSC落地体系</div>
         </div>
-        <div class="step pending">
-          <div class="step-num">2</div>
-          <div class="step-label">第2次见面</div>
-          <div class="step-sub">Kah Sheng + Terrence<br>财务・法律尽调</div>
-        </div>
-        <div class="step pending">
-          <div class="step-num">3</div>
-          <div class="step-label">内部决定</div>
-          <div class="step-sub">全团队会议<br>关起门做GO/否决</div>
+        <div class="decision-card no" id="btn-no" onclick="triggerNo()">
+          <div class="decision-icon">✗</div>
+          <div class="decision-label">否决</div>
+          <div class="decision-sub">条件谈不拢/风险太高<br>终止项目</div>
         </div>
       </div>
     </div>
 
-  </div>
-
-  <!-- CENTER COLUMN -->
-  <div class="center-col">
-
-    <!-- NEXT ACTIONS -->
-    <div class="glass actions-section">
+    <!-- ACTIONS -->
+    <div class="actions-section">
       <div class="section-label">下一步 · 行动清单</div>
       <div class="actions-list">
 
@@ -874,111 +808,64 @@ body {
           <div class="action-tag">待确认</div>
         </div>
 
-        <div class="action-item">
-          <div class="action-num">05</div>
-          <div class="action-title">整理 Catherine F&B 财务数据</div>
-          <div class="action-owner">Kah Sheng</div>
-          <div class="action-tag">进行中</div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- GO DECISION -->
-    <div class="glass decision-section">
-      <div class="section-label">第3步 · GO / 否决 决定</div>
-      <div class="decision-grid">
-        <div class="decision-card go">
-          <div class="decision-icon">⬢</div>
-          <div class="decision-label">GO</div>
-          <div class="decision-sub">签协议・成立合资公司<br>进入SSC落地体系</div>
-        </div>
-        <div class="decision-card no">
-          <div class="decision-icon">⊘</div>
-          <div class="decision-label">否决</div>
-          <div class="decision-sub">条件谈不拢/风险太高<br>终止项目</div>
-        </div>
       </div>
     </div>
 
   </div>
 
-  <!-- RIGHT COLUMN -->
+  <!-- RIGHT: TEAM + STAGES -->
   <div class="right-col">
 
-    <!-- TEAM -->
-    <div class="glass team-section">
+    <div class="team-section">
       <div class="section-label">团队 Team</div>
       <div class="team-grid">
 
         <div class="team-member">
           <div class="member-avatar" style="background:rgba(245,200,66,0.15);color:#f5c842;border:1px solid rgba(245,200,66,0.3);">SY</div>
-          <div>
-            <div class="member-name">Soon Yik</div>
-            <div class="member-role">老板 · 决策者</div>
-          </div>
+          <div><div class="member-name">Soon Yik</div><div class="member-role">老板 · 决策者</div></div>
           <div class="member-status s-green"></div>
         </div>
 
         <div class="team-member">
           <div class="member-avatar" style="background:rgba(0,255,136,0.1);color:#00ff88;border:1px solid rgba(0,255,136,0.25);">KS</div>
-          <div>
-            <div class="member-name">Kah Sheng</div>
-            <div class="member-role">财务 Finance</div>
-          </div>
+          <div><div class="member-name">Kah Sheng</div><div class="member-role">财务 Finance</div></div>
           <div class="member-status s-green"></div>
         </div>
 
         <div class="team-member">
           <div class="member-avatar" style="background:rgba(255,45,85,0.1);color:#ff2d55;border:1px solid rgba(255,45,85,0.25);">TR</div>
-          <div>
-            <div class="member-name">Terrence</div>
-            <div class="member-role">法务 Legal</div>
-          </div>
+          <div><div class="member-name">Terrence</div><div class="member-role">法务 Legal</div></div>
           <div class="member-status s-green"></div>
         </div>
 
         <div class="team-member">
           <div class="member-avatar" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.25);">MH</div>
-          <div>
-            <div class="member-name">Ming Huat</div>
-            <div class="member-role">人力 HR</div>
-          </div>
+          <div><div class="member-name">Ming Huat</div><div class="member-role">人力 HR</div></div>
           <div class="member-status s-yellow"></div>
         </div>
 
         <div class="team-member">
           <div class="member-avatar" style="background:rgba(255,0,170,0.1);color:#ff00aa;border:1px solid rgba(255,0,170,0.25);">JH</div>
-          <div>
-            <div class="member-name">Jia Hui</div>
-            <div class="member-role">营销 Marketing</div>
-          </div>
+          <div><div class="member-name">Jia Hui</div><div class="member-role">营销 Marketing</div></div>
           <div class="member-status s-green"></div>
         </div>
 
         <div class="team-member">
           <div class="member-avatar" style="background:rgba(0,245,255,0.1);color:#00f5ff;border:1px solid rgba(0,245,255,0.25);">SZ</div>
-          <div>
-            <div class="member-name">Suzanne</div>
-            <div class="member-role">品牌 Branding</div>
-          </div>
+          <div><div class="member-name">Suzanne</div><div class="member-role">品牌 Branding</div></div>
           <div class="member-status s-green"></div>
         </div>
 
         <div class="team-member">
           <div class="member-avatar" style="background:rgba(245,200,66,0.15);color:#f5c842;border:1px solid rgba(245,200,66,0.3);">CL</div>
-          <div>
-            <div class="member-name">Clarissa</div>
-            <div class="member-role">IT & 系统</div>
-          </div>
+          <div><div class="member-name">Clarissa</div><div class="member-role">IT & 系统</div></div>
           <div class="member-status s-green"></div>
         </div>
 
       </div>
     </div>
 
-    <!-- 4 STAGES -->
-    <div class="glass stages-section">
+    <div class="stages-section">
       <div class="section-label">GO后 · 项目四阶段</div>
       <div class="stages-track">
         <div class="stage-block">
@@ -1035,28 +922,195 @@ body {
     <div class="ticker-item">ZXL ID: <span>AWAITING RESPONSE</span></div>
     <div class="ticker-item">CATHERINE F&B: <span>PENDING DECISION</span></div>
     <div class="ticker-item">YI KUANG: <span>FIRST MEETING PENDING</span></div>
-    <div class="ticker-item">AN KPET: <span>ON HOLD</span></div>
+    <div class="ticker-item">ANKPET: <span>ON HOLD</span></div>
     <div class="ticker-item">NEXT MEETING: <span>TBD</span></div>
     <div class="ticker-item">SSC STATUS: <span>OPERATIONAL</span></div>
     <div class="ticker-item">PROJECTS: <span>4 ACTIVE</span></div>
     <div class="ticker-item">ZXL ID: <span>AWAITING RESPONSE</span></div>
     <div class="ticker-item">CATHERINE F&B: <span>PENDING DECISION</span></div>
     <div class="ticker-item">YI KUANG: <span>FIRST MEETING PENDING</span></div>
-    <div class="ticker-item">AN KPET: <span>ON HOLD</span></div>
+    <div class="ticker-item">ANKPET: <span>ON HOLD</span></div>
     <div class="ticker-item">NEXT MEETING: <span>TBD</span></div>
   </div>
 </div>
 
 <script>
-// ── PARTICLE CANVAS ──
+// ════════════════════════════════════════
+//  SOUND ENGINE (Web Audio API)
+// ════════════════════════════════════════
+let audioCtx = null;
+let soundEnabled = false;
+let ambientOsc = null;
+let ambientGain = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playTone(freq, type, duration, vol) {
+  if (!soundEnabled || !audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function playGoSound() {
+  if (!soundEnabled || !audioCtx) return;
+  // Ascending triumphant chord
+  [523, 659, 784, 1047].forEach((f, i) => {
+    setTimeout(() => playTone(f, 'sine', 0.8, 0.15), i * 80);
+  });
+  // Bass confirm
+  setTimeout(() => playTone(130, 'triangle', 1.2, 0.1), 300);
+  // UI click
+  playTone(1200, 'square', 0.05, 0.05);
+}
+
+function playNoSound() {
+  if (!soundEnabled || !audioCtx) return;
+  // Descending reject
+  [400, 300, 200].forEach((f, i) => {
+    setTimeout(() => playTone(f, 'sawtooth', 0.4, 0.08), i * 120);
+  });
+  playTone(150, 'square', 0.3, 0.06);
+}
+
+function playClickSound() {
+  if (!soundEnabled || !audioCtx) return;
+  playTone(800, 'sine', 0.08, 0.06);
+}
+
+function playTickSound() {
+  if (!soundEnabled || !audioCtx) return;
+  playTone(1200, 'sine', 0.04, 0.03);
+}
+
+function startAmbient() {
+  if (!audioCtx || ambientOsc) return;
+  ambientOsc = audioCtx.createOscillator();
+  ambientGain = audioCtx.createGain();
+  ambientOsc.type = 'sine';
+  ambientOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // low A
+  ambientGain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+  ambientOsc.connect(ambientGain);
+  ambientGain.connect(audioCtx.destination);
+  ambientOsc.start();
+  // Subtle pulse
+  setInterval(() => {
+    if (!soundEnabled || !ambientGain) return;
+    ambientGain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+    setTimeout(() => {
+      if (!soundEnabled || !ambientGain) return;
+      ambientGain.gain.setValueAtTime(0.025, audioCtx.currentTime);
+    }, 2000);
+  }, 4000);
+}
+
+function stopAmbient() {
+  if (ambientOsc) { ambientOsc.stop(); ambientOsc = null; ambientGain = null; }
+}
+
+// Sound toggle
+const soundBtn = document.getElementById('sound-toggle');
+soundBtn.addEventListener('click', () => {
+  initAudio();
+  soundEnabled = !soundEnabled;
+  if (soundEnabled) {
+    soundBtn.textContent = '🔊 SOUND ON';
+    soundBtn.classList.add('active');
+    startAmbient();
+    playClickSound();
+  } else {
+    soundBtn.textContent = '🔇 SOUND OFF';
+    soundBtn.classList.remove('active');
+    stopAmbient();
+  }
+});
+
+// GO / NO buttons
+function triggerGo() {
+  initAudio();
+  soundEnabled = true;
+  playGoSound();
+  const card = document.getElementById('btn-go');
+  card.style.boxShadow = '0 0 60px rgba(0,255,136,0.5)';
+  setTimeout(() => { card.style.boxShadow = ''; }, 2000);
+}
+
+function triggerNo() {
+  initAudio();
+  soundEnabled = true;
+  playNoSound();
+  const card = document.getElementById('btn-no');
+  card.style.boxShadow = '0 0 60px rgba(255,45,85,0.5)';
+  setTimeout(() => { card.style.boxShadow = ''; }, 2000);
+}
+
+// Click on project cards
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('click', () => {
+    initAudio();
+    if (!soundEnabled) return;
+    playClickSound();
+  });
+});
+
+// ════════════════════════════════════════
+//  CLOCK
+// ════════════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').textContent = h+':'+m;
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const mo  = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('dateStr').textContent =
+    days[now.getDay()] + ' · ' + now.getDate() + ' ' + mo[now.getMonth()] + ' ' + now.getFullYear();
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ════════════════════════════════════════
+//  MONEY COUNTER ANIMATION
+// ════════════════════════════════════════
+function animateMoney(target, suffix) {
+  const el = document.getElementById('money-display');
+  const start = 0;
+  const duration = 2000;
+  const startTime = performance.now();
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const value = Math.floor(start + (target - start) * easeOut(progress));
+    el.textContent = 'RM ' + value.toLocaleString() + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// Animate on load
+setTimeout(() => animateMoney(0, ''), 500);
+
+// ════════════════════════════════════════
+//  PARTICLE CANVAS
+// ════════════════════════════════════════
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 let W, H, particles = [];
 
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 resize();
 window.addEventListener('resize', resize);
 
@@ -1065,15 +1119,14 @@ class Particle {
   reset() {
     this.x = Math.random() * W;
     this.y = Math.random() * H;
-    this.vx = (Math.random() - 0.5) * 0.3;
-    this.vy = (Math.random() - 0.5) * 0.3;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
     this.size = Math.random() * 1.5 + 0.5;
-    this.alpha = Math.random() * 0.5 + 0.1;
-    this.color = Math.random() > 0.7 ? '#ff00aa' : '#00f5ff';
+    this.alpha = Math.random() * 0.4 + 0.1;
+    this.color = Math.random() > 0.75 ? '#ff00aa' : '#00f5ff';
   }
   update() {
-    this.x += this.vx;
-    this.y += this.vy;
+    this.x += this.vx; this.y += this.vy;
     if (this.x < 0 || this.x > W) this.vx *= -1;
     if (this.y < 0 || this.y > H) this.vy *= -1;
   }
@@ -1087,7 +1140,7 @@ class Particle {
   }
 }
 
-for (let i = 0; i < 80; i++) particles.push(new Particle());
+for (let i = 0; i < 70; i++) particles.push(new Particle());
 
 function drawLines() {
   for (let i = 0; i < particles.length; i++) {
@@ -1095,11 +1148,11 @@ function drawLines() {
       const dx = particles[i].x - particles[j].x;
       const dy = particles[i].y - particles[j].y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 120) {
+      if (dist < 130) {
         ctx.beginPath();
         ctx.moveTo(particles[i].x, particles[i].y);
         ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = 'rgba(0,245,255,0.06)';
+        ctx.strokeStyle = 'rgba(0,245,255,0.05)';
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
@@ -1114,20 +1167,6 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
-
-// ── CLOCK ──
-function updateClock() {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('clock').textContent = h+':'+m;
-  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  const mo = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  document.getElementById('dateStr').textContent =
-    days[now.getDay()] + ' · ' + now.getDate() + ' ' + mo[now.getMonth()] + ' ' + now.getFullYear();
-}
-updateClock();
-setInterval(updateClock, 10000);
 </script>
 
 </body>
