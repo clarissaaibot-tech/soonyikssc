@@ -25,906 +25,747 @@
   --muted: rgba(0,245,255,0.4);
 }
 
-* { margin:0; padding:0; box-sizing:border-box; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-  background: #000;
-}
+html, body { height:100%; overflow:hidden; background:#000; }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Exo 2', sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 100vh;
+  display:flex; align-items:center; justify-content:center;
+  width:100vw; height:100vh;
 }
 
-/* Constrain to 16:9, letterbox on non-16:9 */
 .container {
-  position: relative;
-  width: 100vw;
-  height: 56.25vw; /* 9/16 = 0.5625 */
-  max-height: 100vh;
-  max-width: 177.78vh; /* 16/9 = 1.7778 */
-  margin: auto;
-  overflow: hidden;
+  position:relative;
+  width:100vw; height:56.25vw;
+  max-height:100vh; max-width:177.78vh;
+  margin:auto; overflow:hidden;
 }
 
-#bg-canvas {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0;
-}
-
+#bg-canvas { position:absolute; top:0; left:0; width:100%; height:100%; z-index:0; }
 .grid-floor {
-  position: fixed; bottom: 0; left: 0;
-  width: 100%; height: 40%;
-  background:
-    linear-gradient(to top, rgba(0,245,255,0.05) 0%, transparent 100%),
+  position:absolute; bottom:0; left:0;
+  width:100%; height:40%;
+  background: linear-gradient(to top, rgba(0,245,255,0.05) 0%, transparent 100%),
     repeating-linear-gradient(90deg, rgba(0,245,255,0.1) 0px, rgba(0,245,255,0.1) 1px, transparent 1px, transparent 100px),
     repeating-linear-gradient(0deg, rgba(0,245,255,0.1) 0px, rgba(0,245,255,0.1) 1px, transparent 1px, transparent 100px);
   transform: perspective(500px) rotateX(60deg);
   transform-origin: bottom center;
-  z-index: 0;
+  z-index:0;
   animation: grid-scroll 25s linear infinite;
 }
-
 @keyframes grid-scroll {
   from { background-position: 0 0, 0 0, 0 0; }
   to   { background-position: 0 100px, 0 100px, 0 100px; }
 }
-
-.scanline {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
-  pointer-events: none;
-  z-index: 3;
-}
-
+.scanline { position:absolute; top:0; left:0; width:100%; height:100%; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px); pointer-events:none; z-index:3; }
 .grain {
-  position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0.02;
+  position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:3; opacity:0.02;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ── MAIN ── */
+/* ── SCREEN GRID ── */
 .screen {
-  position: relative; z-index: 2;
-  display: grid;
+  position:relative; z-index:2;
+  display:grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto 1fr auto;
-  height: 100%;
-  padding: 1.2vw 1.5vw;
-  gap: 1vw;
+  height:100%;
+  padding:1.2vw 1.5vw;
+  gap:1vw;
 }
 
 /* ── HEADER ── */
-.header {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4px;
-}
+.header { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:0 0.25vw; }
 
-.logo-text {
-  font-family: 'Orbitron', monospace;
-  font-size: 3.2vw; font-weight: 900;
-  letter-spacing: 0.06em;
-  color: var(--cyan);
-  text-shadow: 0 0 16px var(--cyan-glow), 0 0 50px rgba(0,245,255,0.15);
-  line-height: 1;
-}
+.logo-text { font-family:'Orbitron',monospace; font-size:3.2vw; font-weight:900; letter-spacing:0.06em; color:var(--cyan); text-shadow:0 0 16px var(--cyan-glow),0 0 50px rgba(0,245,255,0.15); line-height:1; }
+.logo-sub { font-family:'Share Tech Mono',monospace; font-size:0.7vw; color:var(--muted); letter-spacing:0.2em; text-transform:uppercase; margin-top:0.25vw; }
 
-.logo-sub {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.7vw; color: var(--muted);
-  letter-spacing: 0.2em; text-transform: uppercase;
-  margin-top: 0.25vw;
-}
+.header-right { text-align:right; }
+.clock { font-family:'Orbitron',monospace; font-size:4.5vw; font-weight:700; color:var(--text); letter-spacing:0.04em; line-height:1; text-shadow:0 0 30px rgba(255,255,255,0.08); }
+.date-str { font-family:'Share Tech Mono',monospace; font-size:0.7vw; color:var(--muted); letter-spacing:0.15em; margin-top:0.2vw; }
+.status-row { display:flex; align-items:center; gap:0.5vw; margin-top:0.5vw; justify-content:flex-end; }
+.status-dot { width:0.5vw; height:0.5vw; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green-glow); animation:pulse-dot 2s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+.status-text { font-family:'Share Tech Mono',monospace; font-size:0.6vw; color:var(--green); letter-spacing:0.12em; }
 
-.header-right { text-align: right; }
-
-.clock {
-  font-family: 'Orbitron', monospace;
-  font-size: 4.5vw; font-weight: 700;
-  color: var(--text);
-  letter-spacing: 0.04em; line-height: 1;
-  text-shadow: 0 0 30px rgba(255,255,255,0.08);
-}
-
-.date-str {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.7vw; color: var(--muted);
-  letter-spacing: 0.15em; margin-top: 0.2vw;
-}
-
-.status-row {
-  display: flex; align-items: center; gap: 0.5vw;
-  margin-top: 0.5vw; justify-content: flex-end;
-}
-
-.status-dot {
-  width: 0.5vw; height: 0.5vw; border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green-glow);
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%,100% { opacity:1; transform:scale(1); }
-  50% { opacity:0.4; transform:scale(0.7); }
-}
-
-.status-text {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.6vw; color: var(--green);
-  letter-spacing: 0.12em;
-}
-
-/* ── LEFT: BIG MONEY ── */
-.left-col { display:flex; flex-direction:column; gap:16px; }
+/* ── LEFT COL ── */
+.left-col { display:flex; flex-direction:column; gap:1vw; }
 
 .money-hero {
-  flex: 1;
-  background: rgba(0,245,255,0.03);
-  border: 1px solid rgba(0,245,255,0.12);
-  border-radius: 1vw;
-  padding: 1.8vw;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+  flex:1;
+  background:rgba(0,245,255,0.03);
+  border:1px solid rgba(0,245,255,0.12);
+  border-radius:1vw;
+  padding:1.8vw;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; overflow:hidden;
 }
+.money-hero::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--cyan),transparent); box-shadow:0 0 20px var(--cyan-glow); }
 
-.money-hero::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-  box-shadow: 0 0 20px var(--cyan-glow);
-}
+.money-label { font-family:'Orbitron',monospace; font-size:0.65vw; font-weight:600; letter-spacing:0.25em; text-transform:uppercase; color:var(--muted); margin-bottom:0.8vw; display:flex; align-items:center; gap:0.5vw; }
+.money-label::before { content:''; width:1.5vw; height:1px; background:var(--cyan); box-shadow:0 0 6px var(--cyan-glow); }
 
-.money-label {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.65vw; font-weight: 600;
-  letter-spacing: 0.25em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 0.8vw;
-  display: flex; align-items: center; gap: 0.5vw;
-}
+.money-amount { font-family:'Orbitron',monospace; font-size:5.5vw; font-weight:900; color:var(--cyan); text-shadow:0 0 20px var(--cyan-glow),0 0 60px rgba(0,245,255,0.2); line-height:1; letter-spacing:0.02em; animation:glow-pulse 4s ease-in-out infinite; }
+@keyframes glow-pulse { 0%,100%{text-shadow:0 0 20px var(--cyan-glow),0 0 60px rgba(0,245,255,0.2)} 50%{text-shadow:0 0 30px var(--cyan-glow),0 0 80px rgba(0,245,255,0.3)} }
+.money-sub { font-family:'Share Tech Mono',monospace; font-size:0.8vw; color:var(--muted); margin-top:0.6vw; letter-spacing:0.08em; }
+.money-detail { display:flex; gap:2vw; margin-top:1.2vw; }
+.money-detail-num { font-family:'Orbitron',monospace; font-size:1.8vw; font-weight:700; color:var(--text); line-height:1; }
+.money-detail-num.gold{color:var(--gold);text-shadow:0 0 10px var(--gold-glow)}
+.money-detail-num.green{color:var(--green);text-shadow:0 0 10px var(--green-glow)}
+.money-detail-num.amber{color:var(--amber);text-shadow:0 0 10px rgba(255,149,0,0.4)}
+.money-detail-label { font-family:'Share Tech Mono',monospace; font-size:0.55vw; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-top:0.25vw; }
 
-.money-label::before {
-  content: ''; width: 1.5vw; height: 1px;
-  background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow);
-}
+/* ── PIPELINE ── */
+.section-label { font-family:'Orbitron',monospace; font-size:0.6vw; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--muted); margin-bottom:0.6vw; display:flex; align-items:center; gap:0.5vw; }
+.section-label::before { content:''; width:1.2vw; height:1px; background:var(--cyan); box-shadow:0 0 6px var(--cyan-glow); }
 
-.money-amount {
-  font-family: 'Orbitron', monospace;
-  font-size: 5.5vw; font-weight: 900;
-  color: var(--cyan);
-  text-shadow: 0 0 20px var(--cyan-glow), 0 0 60px rgba(0,245,255,0.2);
-  line-height: 1; letter-spacing: 0.02em;
-  animation: glow-pulse 4s ease-in-out infinite;
-}
-
-@keyframes glow-pulse {
-  0%,100% { text-shadow: 0 0 20px var(--cyan-glow), 0 0 60px rgba(0,245,255,0.2); }
-  50% { text-shadow: 0 0 30px var(--cyan-glow), 0 0 80px rgba(0,245,255,0.3); }
-}
-
-.money-sub {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.8vw; color: var(--muted);
-  margin-top: 0.6vw; letter-spacing: 0.08em;
-}
-
-.money-detail {
-  display: flex; gap: 2vw; margin-top: 1.2vw;
-}
-
-.money-detail-item {}
-
-.money-detail-num {
-  font-family: 'Orbitron', monospace;
-  font-size: 1.8vw; font-weight: 700;
-  color: var(--text); line-height: 1;
-}
-
-.money-detail-num.gold { color: var(--gold); text-shadow: 0 0 10px var(--gold-glow); }
-.money-detail-num.green { color: var(--green); text-shadow: 0 0 10px var(--green-glow); }
-.money-detail-num.amber { color: var(--amber); text-shadow: 0 0 10px rgba(255,149,0,0.4); }
-
-.money-detail-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.55vw; color: var(--muted);
-  letter-spacing: 0.1em; text-transform: uppercase;
-  margin-top: 0.25vw;
-}
-
-/* ── PROJECT PIPELINE ── */
-.pipeline-section { flex: 1; display:flex; flex-direction:column; }
-
-.section-label {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.6vw; font-weight: 600;
-  letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 0.6vw;
-  display: flex; align-items: center; gap: 0.5vw;
-}
-
-.section-label::before {
-  content: ''; width: 1.2vw; height: 1px;
-  background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow);
-}
-
-.pipeline-grid {
-  display: flex; flex-direction: column; gap: 0.5vw; flex: 1;
-}
+.pipeline-grid { display:flex; flex-direction:column; gap:0.5vw; flex:1; }
 
 .project-card {
-  background: rgba(0,245,255,0.03);
-  border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 0.6vw;
-  padding: 0.9vw 1vw;
-  display: flex; align-items: center; gap: 0.8vw;
-  position: relative; overflow: hidden;
-  transition: all 0.3s;
-  animation: slide-in 0.4s ease-out forwards;
-  opacity: 0;
+  background:rgba(0,245,255,0.03);
+  border:1px solid rgba(0,245,255,0.1);
+  border-radius:0.6vw;
+  padding:0.9vw 1vw;
+  display:flex; align-items:center; gap:0.8vw;
+  position:relative; overflow:hidden;
+  cursor:pointer;
+  transition:all 0.25s;
+  animation:slide-in 0.4s ease-out forwards;
+  opacity:0;
+  touch-action: manipulation;
 }
+.project-card:nth-child(1){animation-delay:0.1s}
+.project-card:nth-child(2){animation-delay:0.2s}
+.project-card:nth-child(3){animation-delay:0.3s}
+.project-card:nth-child(4){animation-delay:0.4s}
+@keyframes slide-in { from{opacity:0;transform:translateX(-0.6vw)} to{opacity:1;transform:translateX(0)} }
+.project-card::after { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
+.project-card.conditional::after{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+.project-card.pending::after{background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.project-card.go-card::after{background:var(--green);box-shadow:0 0 10px var(--green)}
+.project-card.no-card::after{background:var(--red);box-shadow:0 0 10px var(--red)}
+.project-card.onhold::after{background:rgba(255,255,255,0.1)}
+.project-card:active{background:rgba(0,245,255,0.08);transform:scale(0.99)}
+.project-card.ghost{opacity:0.3 !important}
 
-.project-card:nth-child(1) { animation-delay: 0.1s; }
-.project-card:nth-child(2) { animation-delay: 0.2s; }
-.project-card:nth-child(3) { animation-delay: 0.3s; }
-.project-card:nth-child(4) { animation-delay: 0.4s; }
+.project-name{font-size:1.1vw;font-weight:600;color:var(--text);margin-bottom:0.1vw}
+.project-meta{font-size:0.7vw;color:var(--muted);font-family:'Share Tech Mono',monospace}
+.next-action{font-size:0.7vw;color:var(--cyan);margin-top:0.25vw;font-family:'Share Tech Mono',monospace}
 
-@keyframes slide-in {
-  from { opacity:0; transform:translateX(-0.6vw); }
-  to   { opacity:1; transform:translateX(0); }
-}
+.status-badge{font-family:'Orbitron',monospace;font-size:0.55vw;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;padding:0.25vw 0.6vw;border-radius:3px;flex-shrink:0}
+.badge-conditional{background:rgba(255,149,0,0.15);color:var(--amber);border:1px solid rgba(255,149,0,0.3)}
+.badge-pending{background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.25)}
+.badge-go{background:rgba(0,255,136,0.15);color:var(--green);border:1px solid rgba(0,255,136,0.3)}
+.badge-no{background:rgba(255,45,85,0.15);color:var(--red);border:1px solid rgba(255,45,85,0.3)}
+.badge-onhold{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid rgba(255,255,255,0.1)}
 
-.project-card::after {
-  content: ''; position: absolute;
-  left:0; top:0; bottom:0; width:3px;
-}
-
-.project-card.conditional::after { background:var(--amber); box-shadow:0 0 10px var(--amber); }
-.project-card.pending::after    { background:var(--cyan);  box-shadow:0 0 10px var(--cyan); }
-.project-card.decision::after    { background:var(--magenta); box-shadow:0 0 10px var(--magenta); }
-.project-card.onhold::after    { background:rgba(255,255,255,0.1); }
-
-.project-card:hover { background:rgba(0,245,255,0.06); border-color:rgba(0,245,255,0.25); }
-
-.project-name {
-  font-size: 1.1vw; font-weight: 600; color: var(--text); margin-bottom: 0.1vw;
-}
-
-.project-meta {
-  font-size: 0.7vw; color: var(--muted); font-family: 'Share Tech Mono', monospace;
-}
-
-.next-action {
-  font-size: 0.7vw; color: var(--cyan); margin-top: 0.25vw;
-  font-family: 'Share Tech Mono', monospace;
-}
-
-.status-badge {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.55vw; font-weight: 600;
-  letter-spacing: 0.15em; text-transform: uppercase;
-  padding: 0.25vw 0.6vw; border-radius: 3px; flex-shrink: 0;
-}
-
-.badge-conditional { background:rgba(255,149,0,0.15); color:var(--amber); border:1px solid rgba(255,149,0,0.3); }
-.badge-pending     { background:rgba(0,245,255,0.1);  color:var(--cyan);   border:1px solid rgba(0,245,255,0.25); }
-.badge-decision    { background:rgba(255,0,170,0.1); color:var(--magenta); border:1px solid rgba(255,0,170,0.25); }
-.badge-onhold      { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid rgba(255,255,255,0.1); }
-
-/* ── CENTER: GO / NO-GO ── */
+/* ── CENTER ── */
 .center-col { display:flex; flex-direction:column; gap:1vw; }
 
 .decision-hero {
-  flex: 1;
-  background: rgba(255,0,170,0.03);
-  border: 1px solid rgba(255,0,170,0.15);
-  border-radius: 1vw;
-  padding: 1.5vw;
-  display: flex; flex-direction: column;
-  justify-content: center;
-  position: relative; overflow: hidden;
+  flex:1;
+  background:rgba(255,0,170,0.03);
+  border:1px solid rgba(255,0,170,0.15);
+  border-radius:1vw;
+  padding:1.5vw;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative; overflow:hidden;
 }
+.decision-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--magenta),transparent);box-shadow:0 0 20px rgba(255,0,170,0.4)}
 
-.decision-hero::before {
-  content: '';
-  position: absolute; top:0; left:0; right:0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--magenta), transparent);
-  box-shadow: 0 0 20px rgba(255,0,170,0.4);
-}
+.decision-urgency{font-family:'Orbitron',monospace;font-size:0.6vw;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:var(--magenta);text-shadow:0 0 8px rgba(255,0,170,0.4);margin-bottom:0.6vw;display:flex;align-items:center;gap:0.5vw;animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.decision-urgency::before{content:'●';font-size:0.5vw}
+.decision-company{font-family:'Orbitron',monospace;font-size:3.2vw;font-weight:900;color:var(--text);text-shadow:0 0 20px rgba(255,255,255,0.1);line-height:1;letter-spacing:0.02em;margin-bottom:0.4vw}
+.decision-industry{font-family:'Share Tech Mono',monospace;font-size:0.8vw;color:var(--muted);letter-spacing:0.1em;margin-bottom:1.2vw}
+.decision-question{font-size:0.95vw;font-weight:500;color:var(--text);margin-bottom:1.2vw;line-height:1.4}
+.decision-cards{display:grid;grid-template-columns:1fr 1fr;gap:0.8vw}
+.decision-card{border-radius:0.8vw;padding:1.2vw;text-align:center;border:2px solid;transition:all 0.25s;position:relative;overflow:hidden;cursor:pointer;touch-action:manipulation}
+.decision-card.go{border-color:rgba(0,255,136,0.4);background:rgba(0,255,136,0.05)}
+.decision-card.no{border-color:rgba(255,45,85,0.4);background:rgba(255,45,85,0.05)}
+.decision-card:active.go{background:rgba(0,255,136,0.15);box-shadow:0 0 40px rgba(0,255,136,0.3)}
+.decision-card:active.no{background:rgba(255,45,85,0.15);box-shadow:0 0 40px rgba(255,45,85,0.3)}
+.decision-icon{font-size:2.2vw;margin-bottom:0.6vw}
+.decision-label{font-family:'Orbitron',monospace;font-size:1.8vw;font-weight:700;margin-bottom:0.4vw}
+.decision-card.go .decision-label{color:var(--green);text-shadow:0 0 12px var(--green-glow)}
+.decision-card.no .decision-label{color:var(--red);text-shadow:0 0 12px var(--red-glow)}
+.decision-sub{font-size:0.65vw;color:var(--muted);font-family:'Share Tech Mono',monospace;line-height:1.4}
 
-.decision-urgency {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.6vw; font-weight: 600;
-  letter-spacing: 0.25em; text-transform: uppercase;
-  color: var(--magenta);
-  text-shadow: 0 0 8px rgba(255,0,170,0.4);
-  margin-bottom: 0.6vw;
-  display: flex; align-items: center; gap: 0.5vw;
-  animation: blink 1.5s ease-in-out infinite;
-}
+/* ── ACTIONS ── */
+.actions-section{background:rgba(0,245,255,0.02);border:1px solid rgba(0,245,255,0.1);border-radius:0.8vw;padding:1vw}
+.actions-list{display:flex;flex-direction:column;gap:0.4vw;margin-top:0.6vw}
+.action-item{display:flex;align-items:center;gap:0.6vw;padding:0.6vw 0.8vw;background:rgba(0,245,255,0.03);border:1px solid rgba(0,245,255,0.08);border-radius:0.4vw;border-left:2px solid var(--cyan);animation:slide-in 0.4s ease-out forwards;opacity:0;cursor:pointer;touch-action:manipulation;transition:all 0.2s}
+.action-item:nth-child(1){animation-delay:0.15s}
+.action-item:nth-child(2){animation-delay:0.25s}
+.action-item:nth-child(3){animation-delay:0.35s}
+.action-item:nth-child(4){animation-delay:0.45s}
+.action-item:active{background:rgba(0,245,255,0.08)}
+.action-item.done{opacity:0.35;border-left-color:rgba(0,245,255,0.2)}
+.action-item.done .action-title{text-decoration:line-through;color:var(--muted)}
+.action-item.done .action-num{color:var(--muted)}
+.action-num{font-family:'Orbitron',monospace;font-size:0.85vw;font-weight:700;color:var(--cyan);text-shadow:0 0 8px var(--cyan-glow);min-width:1.6vw}
+.action-title{font-size:0.85vw;font-weight:400;color:var(--text);flex:1}
+.action-owner{font-size:0.65vw;color:var(--muted);font-family:'Share Tech Mono',monospace}
+.action-tag{font-family:'Orbitron',monospace;font-size:0.5vw;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.2vw 0.5vw;border-radius:3px;background:rgba(0,245,255,0.1);color:var(--cyan);border:1px solid rgba(0,245,255,0.2);white-space:nowrap}
 
-@keyframes blink {
-  0%,100% { opacity:1; }
-  50% { opacity:0.4; }
-}
+/* ── RIGHT ── */
+.right-col{display:flex;flex-direction:column;gap:1vw}
+.team-section{flex:1;background:rgba(0,245,255,0.02);border:1px solid rgba(0,245,255,0.1);border-radius:0.8vw;padding:1vw}
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4vw;margin-top:0.6vw}
+.team-member{background:rgba(0,245,255,0.03);border:1px solid rgba(0,245,255,0.08);border-radius:0.5vw;padding:0.6vw 0.8vw;display:flex;align-items:center;gap:0.5vw;cursor:pointer;touch-action:manipulation;transition:all 0.2s}
+.team-member:active{background:rgba(0,245,255,0.08)}
+.member-avatar{width:2.1vw;height:2.1vw;border-radius:0.4vw;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:0.65vw;font-weight:700;flex-shrink:0}
+.member-name{font-size:0.8vw;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-role{font-size:0.6vw;color:var(--muted);font-family:'Share Tech Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-status{width:0.45vw;height:0.45vw;border-radius:50%;flex-shrink:0;margin-left:auto}
+.s-green{background:var(--green);box-shadow:0 0 6px var(--green-glow);animation:pulse-dot 2s ease-in-out infinite}
+.s-yellow{background:var(--amber);box-shadow:0 0 6px rgba(255,149,0,0.5)}
+.s-gray{background:rgba(255,255,255,0.2)}
 
-.decision-urgency::before {
-  content: '●'; font-size: 0.5vw;
-}
-
-.decision-company {
-  font-family: 'Orbitron', monospace;
-  font-size: 3.2vw; font-weight: 900;
-  color: var(--text);
-  text-shadow: 0 0 20px rgba(255,255,255,0.1);
-  line-height: 1; letter-spacing: 0.02em;
-  margin-bottom: 0.4vw;
-}
-
-.decision-industry {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.8vw; color: var(--muted);
-  letter-spacing: 0.1em; margin-bottom: 1.2vw;
-}
-
-.decision-question {
-  font-size: 0.95vw; font-weight: 500;
-  color: var(--text); margin-bottom: 1.2vw;
-  line-height: 1.4;
-}
-
-.decision-cards {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0.8vw;
-}
-
-.decision-card {
-  border-radius: 0.8vw; padding: 1.2vw;
-  text-align: center;
-  border: 2px solid;
-  transition: all 0.3s;
-  position: relative; overflow: hidden;
-}
-
-.decision-card.go {
-  border-color: rgba(0,255,136,0.4);
-  background: rgba(0,255,136,0.05);
-}
-
-.decision-card.no {
-  border-color: rgba(255,45,85,0.4);
-  background: rgba(255,45,85,0.05);
-}
-
-.decision-card:hover.go { background:rgba(0,255,136,0.1); box-shadow:0 0 30px rgba(0,255,136,0.2); }
-.decision-card:hover.no { background:rgba(255,45,85,0.1); box-shadow:0 0 30px rgba(255,45,85,0.2); }
-
-.decision-icon {
-  font-size: 2.2vw; margin-bottom: 0.6vw;
-  filter: drop-shadow(0 0 8px currentColor);
-}
-
-.decision-label {
-  font-family: 'Orbitron', monospace;
-  font-size: 1.8vw; font-weight: 700; margin-bottom: 0.4vw;
-}
-
-.decision-card.go .decision-label { color:var(--green); text-shadow:0 0 12px var(--green-glow); }
-.decision-card.no .decision-label { color:var(--red); text-shadow:0 0 12px var(--red-glow); }
-
-.decision-sub {
-  font-size: 0.65vw; color: var(--muted);
-  font-family: 'Share Tech Mono', monospace; line-height: 1.4;
-}
-
-/* ── ACTION LIST ── */
-.actions-section {
-  background: rgba(0,245,255,0.02);
-  border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 0.8vw; padding: 1vw;
-}
-
-.actions-list {
-  display: flex; flex-direction: column; gap: 0.4vw;
-  margin-top: 0.6vw;
-}
-
-.action-item {
-  display: flex; align-items: center; gap: 0.6vw;
-  padding: 0.6vw 0.8vw;
-  background: rgba(0,245,255,0.03);
-  border: 1px solid rgba(0,245,255,0.08);
-  border-radius: 0.4vw;
-  border-left: 2px solid var(--cyan);
-  animation: slide-in 0.4s ease-out forwards;
-  opacity: 0;
-}
-
-.action-item:nth-child(1) { animation-delay: 0.15s; }
-.action-item:nth-child(2) { animation-delay: 0.25s; }
-.action-item:nth-child(3) { animation-delay: 0.35s; }
-.action-item:nth-child(4) { animation-delay: 0.45s; }
-
-.action-num {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.85vw; font-weight: 700;
-  color: var(--cyan);
-  text-shadow: 0 0 8px var(--cyan-glow);
-  min-width: 1.6vw;
-}
-
-.action-title {
-  font-size: 0.85vw; font-weight: 400; color: var(--text); flex: 1;
-}
-
-.action-owner {
-  font-size: 0.65vw; color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-}
-
-.action-tag {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.5vw; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 0.2vw 0.5vw; border-radius: 3px;
-  background: rgba(0,245,255,0.1);
-  color: var(--cyan); border: 1px solid rgba(0,245,255,0.2);
-  white-space: nowrap;
-}
-
-/* ── RIGHT: TEAM ── */
-.right-col { display:flex; flex-direction:column; gap:1vw; }
-
-.team-section {
-  flex: 1;
-  background: rgba(0,245,255,0.02);
-  border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 0.8vw; padding: 1vw;
-}
-
-.team-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0.4vw; margin-top: 0.6vw;
-}
-
-.team-member {
-  background: rgba(0,245,255,0.03);
-  border: 1px solid rgba(0,245,255,0.08);
-  border-radius: 0.5vw; padding: 0.6vw 0.8vw;
-  display: flex; align-items: center; gap: 0.5vw;
-}
-
-.member-avatar {
-  width: 2.1vw; height: 2.1vw; border-radius: 0.4vw;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Orbitron', monospace;
-  font-size: 0.65vw; font-weight: 700; flex-shrink: 0;
-}
-
-.member-name {
-  font-size: 0.8vw; font-weight: 500; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.member-role {
-  font-size: 0.6vw; color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.member-status {
-  width: 0.45vw; height: 0.45vw; border-radius: 50%;
-  flex-shrink: 0; margin-left: auto;
-}
-
-.s-green  { background:var(--green);  box-shadow:0 0 6px var(--green-glow);  animation:pulse-dot 2s ease-in-out infinite; }
-.s-yellow { background:var(--amber); box-shadow:0 0 6px rgba(255,149,0,0.5); }
-.s-gray   { background:rgba(255,255,255,0.2); }
-
-/* ── 4 STAGES ── */
-.stages-section {
-  background: rgba(0,245,255,0.02);
-  border: 1px solid rgba(0,245,255,0.1);
-  border-radius: 0.8vw; padding: 1vw;
-}
-
-.stages-track {
-  display: flex; gap: 0.4vw; margin-top: 0.6vw;
-}
-
-.stage-block {
-  flex: 1; text-align: center;
-  padding: 0.6vw 0.25vw; border-radius: 0.4vw;
-  background: rgba(0,245,255,0.03);
-  border: 1px solid rgba(0,245,255,0.08);
-}
-
-.stage-block.active {
-  background: rgba(0,245,255,0.08);
-  border-color: rgba(0,245,255,0.25);
-  box-shadow: 0 0 12px rgba(0,245,255,0.1);
-}
-
-.stage-num {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.55vw; color: var(--muted); margin-bottom: 0.25vw;
-}
-
-.stage-name {
-  font-size: 0.65vw; font-weight: 500; color: var(--text); line-height: 1.2;
-}
-
-.stage-block.active .stage-name { color: var(--cyan); }
+.stages-section{background:rgba(0,245,255,0.02);border:1px solid rgba(0,245,255,0.1);border-radius:0.8vw;padding:1vw}
+.stages-track{display:flex;gap:0.4vw;margin-top:0.6vw}
+.stage-block{flex:1;text-align:center;padding:0.6vw 0.25vw;border-radius:0.4vw;background:rgba(0,245,255,0.03);border:1px solid rgba(0,245,255,0.08)}
+.stage-block.active{background:rgba(0,245,255,0.08);border-color:rgba(0,245,255,0.25);box-shadow:0 0 12px rgba(0,245,255,0.1)}
+.stage-num{font-family:'Share Tech Mono',monospace;font-size:0.55vw;color:var(--muted);margin-bottom:0.25vw}
+.stage-name{font-size:0.65vw;font-weight:500;color:var(--text);line-height:1.2}
+.stage-block.active .stage-name{color:var(--cyan)}
 
 /* ── FOOTER ── */
-.footer {
-  grid-column: 1 / -1;
-  display: flex; align-items: center;
-  justify-content: space-between; padding: 0 0.25vw;
-}
-
-.footer-stats { display: flex; align-items: center; }
-
-.footer-stat {
-  text-align: center; padding: 0 1.8vw;
-  position: relative;
-}
-
-.footer-stat:not(:last-child)::after {
-  content: ''; position: absolute;
-  right: 0; top: 20%; bottom: 20%;
-  width: 1px; background: rgba(0,245,255,0.12);
-}
-
-.footer-stat-num {
-  font-family: 'Orbitron', monospace;
-  font-size: 2.2vw; font-weight: 700; line-height: 1;
-}
-
-.footer-stat-num.cyan   { color:var(--cyan);   text-shadow:0 0 12px var(--cyan-glow); }
-.footer-stat-num.magenta{ color:var(--magenta);text-shadow:0 0 12px rgba(255,0,170,0.4); }
-.footer-stat-num.gold  { color:var(--gold);   text-shadow:0 0 12px var(--gold-glow); }
-.footer-stat-num.green { color:var(--green);  text-shadow:0 0 12px var(--green-glow); }
-
-.footer-stat-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.55vw; color: var(--muted);
-  letter-spacing: 0.1em; text-transform: uppercase;
-  margin-top: 0.25vw;
-}
-
-.footer-right {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.65vw; color: rgba(0,245,255,0.25);
-  letter-spacing: 0.1em;
-}
+.footer{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 0.25vw}
+.footer-stats{display:flex;align-items:center}
+.footer-stat{text-align:center;padding:0 1.8vw;position:relative}
+.footer-stat:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:1px;background:rgba(0,245,255,0.12)}
+.footer-stat-num{font-family:'Orbitron',monospace;font-size:2.2vw;font-weight:700;line-height:1}
+.footer-stat-num.cyan{color:var(--cyan);text-shadow:0 0 12px var(--cyan-glow)}
+.footer-stat-num.amber{color:var(--amber);text-shadow:0 0 12px rgba(255,149,0,0.4)}
+.footer-stat-num.gold{color:var(--gold);text-shadow:0 0 12px var(--gold-glow)}
+.footer-stat-num.green{color:var(--green);text-shadow:0 0 12px var(--green-glow)}
+.footer-stat-label{font-family:'Share Tech Mono',monospace;font-size:0.55vw;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:0.25vw}
+.footer-right{font-family:'Share Tech Mono',monospace;font-size:0.65vw;color:rgba(0,245,255,0.25);letter-spacing:0.1em}
 
 /* ── TICKER ── */
-.ticker {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 1.8vw;
-  background: rgba(0,245,255,0.04);
-  border-top: 1px solid rgba(0,245,255,0.12);
-  display: flex; align-items: center; overflow: hidden; z-index: 4;
+.ticker{position:absolute;bottom:0;left:0;right:0;height:1.8vw;background:rgba(0,245,255,0.04);border-top:1px solid rgba(0,245,255,0.12);display:flex;align-items:center;overflow:hidden;z-index:4}
+.ticker-inner{display:flex;gap:3.5vw;animation:ticker-scroll 25s linear infinite;white-space:nowrap}
+.ticker-item{font-family:'Share Tech Mono',monospace;font-size:0.65vw;color:var(--muted);letter-spacing:0.08em}
+.ticker-item span{color:var(--cyan)}
+@keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ════════════════════════════════════════
+   DETAIL PANEL (slides in from right)
+═══════════════════════════════════════ */
+.detail-overlay {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background:rgba(3,3,10,0.7);
+  backdrop-filter:blur(8px);
+  z-index:10;
+  display:flex; align-items:stretch;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.3s;
+}
+.detail-overlay.open{opacity:1;pointer-events:all}
+
+.detail-panel {
+  position:absolute; top:0; right:0;
+  width:42vw; height:100%;
+  background:rgba(3,10,20,0.95);
+  border-left:1px solid rgba(0,245,255,0.2);
+  display:flex; flex-direction:column;
+  transform:translateX(100%);
+  transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow:hidden;
+}
+.detail-overlay.open .detail-panel{transform:translateX(0)}
+
+.detail-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.5vw 1.8vw;
+  border-bottom:1px solid rgba(0,245,255,0.1);
+  flex-shrink:0;
+}
+.detail-company{font-family:'Orbitron',monospace;font-size:2vw;font-weight:900;color:var(--text);text-shadow:0 0 20px rgba(255,255,255,0.1)}
+.detail-industry{font-family:'Share Tech Mono',monospace;font-size:0.7vw;color:var(--muted);margin-top:0.2vw;letter-spacing:0.1em}
+.detail-close{
+  width:3vw; height:3vw; border-radius:50%;
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; touch-action:manipulation;
+  font-size:1.5vw; color:var(--muted);
+  transition:all 0.2s; flex-shrink:0;
+}
+.detail-close:active{background:rgba(255,255,255,0.1);color:var(--text)}
+
+.detail-body{flex:1;overflow-y:auto;padding:1.5vw 1.8vw;display:flex;flex-direction:column;gap:1.2vw}
+.detail-body::-webkit-scrollbar{width:0.3vw}
+.detail-body::-webkit-scrollbar-track{background:transparent}
+.detail-body::-webkit-scrollbar-thumb{background:rgba(0,245,255,0.15);border-radius:1vw}
+
+.detail-section-title{font-family:'Orbitron',monospace;font-size:0.6vw;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5vw;display:flex;align-items:center;gap:0.4vw}
+.detail-section-title::before{content:'';width:0.8vw;height:1px;background:var(--cyan)}
+
+.detail-field{display:flex;flex-direction:column;gap:0.2vw}
+.detail-field-label{font-family:'Share Tech Mono',monospace;font-size:0.55vw;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.detail-field-value{font-size:0.9vw;color:var(--text)}
+.detail-field-value.highlight{color:var(--cyan);font-family:'Orbitron',monospace;font-size:1.2vw;font-weight:700}
+
+.detail-divider{height:1px;background:rgba(0,245,255,0.08);margin:0.5vw 0}
+
+.detail-notes{
+  background:rgba(0,245,255,0.03);
+  border:1px solid rgba(0,245,255,0.1);
+  border-radius:0.6vw;
+  padding:1vw;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.75vw; color:var(--text);
+  line-height:1.6;
+  min-height:4vw;
+  resize:none; border:none; outline:none;
+  background:transparent;
+  width:100%;
+}
+.detail-notes::placeholder{color:var(--muted)}
+
+.detail-footer{
+  padding:1.2vw 1.8vw;
+  border-top:1px solid rgba(0,245,255,0.1);
+  display:flex; gap:0.8vw;
+  flex-shrink:0;
 }
 
-.ticker-inner {
-  display: flex; gap: 3.5vw;
-  animation: ticker-scroll 25s linear infinite;
-  white-space: nowrap;
+.big-btn{
+  flex:1; border-radius:0.8vw;
+  padding:1.2vw;
+  font-family:'Orbitron',monospace;
+  font-size:1.4vw; font-weight:700;
+  letter-spacing:0.1em;
+  cursor:pointer; touch-action:manipulation;
+  border:2px solid;
+  transition:all 0.2s;
+  display:flex; flex-direction:column; align-items:center; gap:0.3vw;
 }
+.big-btn:active{transform:scale(0.97)}
+.big-btn-sub{font-size:0.6vw;font-weight:400;letter-spacing:0.05em;opacity:0.7}
 
-.ticker-item {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.65vw; color: var(--muted);
-  letter-spacing: 0.08em;
+.btn-go{border-color:rgba(0,255,136,0.5);background:rgba(0,255,136,0.08);color:var(--green);text-shadow:0 0 12px var(--green-glow)}
+.btn-go:active{background:rgba(0,255,136,0.2);box-shadow:0 0 40px rgba(0,255,136,0.4)}
+.btn-no{border-color:rgba(255,45,85,0.5);background:rgba(255,45,85,0.08);color:var(--red);text-shadow:0 0 12px var(--red-glow)}
+.btn-no:active{background:rgba(255,45,85,0.2);box-shadow:0 0 40px rgba(255,45,85,0.4)}
+
+/* ════════════════════════════════════════
+   CONFIRM MODAL
+═══════════════════════════════════════ */
+.confirm-modal{
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background:rgba(3,3,10,0.85);
+  backdrop-filter:blur(12px);
+  z-index:20;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.25s;
 }
+.confirm-modal.open{opacity:1;pointer-events:all}
 
-.ticker-item span { color: var(--cyan); }
-
-@keyframes ticker-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+.confirm-box{
+  background:rgba(5,15,30,0.98);
+  border:1px solid rgba(0,245,255,0.2);
+  border-radius:1.2vw;
+  padding:2.5vw 3vw;
+  text-align:center;
+  min-width:30vw;
+  transform:scale(0.9);
+  transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
 }
+.confirm-modal.open .confirm-box{transform:scale(1)}
 
-/* ── SOUND BUTTON ── */
-/* removed */
+.confirm-icon{font-size:3vw;margin-bottom:1vw}
+.confirm-title{font-family:'Orbitron',monospace;font-size:1.5vw;font-weight:700;color:var(--text);margin-bottom:0.5vw}
+.confirm-sub{font-family:'Share Tech Mono',monospace;font-size:0.75vw;color:var(--muted);line-height:1.5;margin-bottom:1.5vw}
+
+.confirm-actions{display:flex;gap:1vw;justify-content:center}
+.confirm-yes,.confirm-no{
+  padding:0.9vw 2.5vw;
+  border-radius:0.6vw;
+  font-family:'Orbitron',monospace;
+  font-size:1vw; font-weight:700;
+  letter-spacing:0.1em;
+  cursor:pointer; touch-action:manipulation;
+  border:2px solid;
+  transition:all 0.2s;
+}
+.confirm-yes:active,.confirm-no:active{transform:scale(0.95)}
+.confirm-yes{background:rgba(0,255,136,0.15);border-color:rgba(0,255,136,0.5);color:var(--green)}
+.confirm-no{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);color:var(--muted)}
+
+/* Result flash */
+.result-flash{
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  z-index:25;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.3s;
+}
+.result-flash.open{opacity:1;pointer-events:all;animation:flash-out 1.5s ease-out forwards}
+@keyframes flash-out{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
+.result-flash.go-flash{background:rgba(0,255,136,0.15)}
+.result-flash.no-flash{background:rgba(255,45,85,0.15)}
+.result-flash-text{font-family:'Orbitron',monospace;font-size:5vw;font-weight:900;text-shadow:0 0 40px currentColor;animation:result-pop 0.4s ease-out}
+@keyframes result-pop{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
+.result-flash.go-flash .result-flash-text{color:var(--green)}
+.result-flash.no-flash .result-flash-text{color:var(--red)}
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div id="bg-canvas"></div>
+  <canvas id="bg-canvas"></canvas>
   <div class="grid-floor"></div>
   <div class="scanline"></div>
   <div class="grain"></div>
 
   <div class="screen">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div>
-      <div class="logo-text">SSC JARVIS</div>
-      <div class="logo-sub">Share Service Centre · Command Center</div>
-    </div>
-    <div class="header-right">
-      <div class="clock" id="clock">--:--</div>
-      <div class="date-str" id="dateStr">---</div>
-      <div class="status-row">
-        <div class="status-dot"></div>
-        <div class="status-text">SYSTEM ONLINE</div>
+    <!-- HEADER -->
+    <div class="header">
+      <div>
+        <div class="logo-text">SSC JARVIS</div>
+        <div class="logo-sub">Share Service Centre · Command Center</div>
       </div>
-    </div>
-  </div>
-
-  <!-- LEFT: MONEY + PIPELINE -->
-  <div class="left-col">
-
-    <!-- MONEY HERO -->
-    <div class="money-hero">
-      <div class="money-label">Portfolio 总估值</div>
-      <div class="money-amount" id="money-display">RM 0</div>
-      <div class="money-sub">4 个在谈项目 · 潜在投资组合</div>
-      <div class="money-detail">
-        <div class="money-detail-item">
-          <div class="money-detail-num gold">RM 0</div>
-          <div class="money-detail-label">Catherine F&B</div>
-        </div>
-        <div class="money-detail-item">
-          <div class="money-detail-num green">RM 0</div>
-          <div class="money-detail-label">ZXL Interior</div>
-        </div>
-        <div class="money-detail-item">
-          <div class="money-detail-num amber">RM 0</div>
-          <div class="money-detail-label">Yi Kuang</div>
+      <div class="header-right">
+        <div class="clock" id="clock">--:--</div>
+        <div class="date-str" id="dateStr">---</div>
+        <div class="status-row">
+          <div class="status-dot"></div>
+          <div class="status-text">SYSTEM ONLINE</div>
         </div>
       </div>
     </div>
 
-    <!-- PIPELINE -->
-    <div class="pipeline-section">
-      <div class="section-label">Project Pipeline</div>
-      <div class="pipeline-grid">
+    <!-- LEFT: MONEY + PIPELINE -->
+    <div class="left-col">
 
-        <div class="project-card pending">
-          <div style="flex:1; min-width:0;">
-            <div class="project-name">Catherine F&B</div>
-            <div class="project-meta">餐饮 · Ready to Eat</div>
-            <div class="next-action">📅 20/6 开会后才有财务数据</div>
+      <div class="money-hero">
+        <div class="money-label">Portfolio 总估值</div>
+        <div class="money-amount" id="money-display">RM 0</div>
+        <div class="money-sub">4 个在谈项目 · 潜在投资组合</div>
+        <div class="money-detail">
+          <div class="money-detail-item">
+            <div class="money-detail-num gold">RM 0</div>
+            <div class="money-detail-label">Catherine F&B</div>
           </div>
-          <span class="status-badge badge-pending">等开会</span>
-        </div>
-
-        <div class="project-card conditional">
-          <div style="flex:1; min-width:0;">
-            <div class="project-name">ZXL Interior Design</div>
-            <div class="project-meta">室内设计平台 · Soon Yik 70%</div>
-            <div class="next-action">⏳ 等定开会时间</div>
+          <div class="money-detail-item">
+            <div class="money-detail-num green">RM 0</div>
+            <div class="money-detail-label">ZXL Interior</div>
           </div>
-          <span class="status-badge badge-conditional">等时间</span>
-        </div>
-
-        <div class="project-card pending">
-          <div style="flex:1; min-width:0;">
-            <div class="project-name">Yi Kuang Tourism</div>
-            <div class="project-meta">旅游 · 等待第1次见面</div>
-            <div class="next-action">→ Soon Yik 安排第1次见面</div>
+          <div class="money-detail-item">
+            <div class="money-detail-num amber">RM 0</div>
+            <div class="money-detail-label">Yi Kuang</div>
           </div>
-          <span class="status-badge badge-pending">待见面</span>
         </div>
+      </div>
 
-        <div class="project-card onhold">
-          <div style="flex:1; min-width:0;">
-            <div class="project-name">AnkPet Pet — Dog</div>
-            <div class="project-meta">宠物行业 · 暂停</div>
-            <div class="next-action">→ 等待其他项目完成后重启</div>
+      <div class="pipeline-section">
+        <div class="section-label">Project Pipeline · 点开详情</div>
+        <div class="pipeline-grid" id="pipeline-grid">
+
+          <div class="project-card pending" data-project="catherine" onclick="openDetail('catherine')">
+            <div style="flex:1;min-width:0">
+              <div class="project-name">Catherine F&B</div>
+              <div class="project-meta">餐饮 · Ready to Eat</div>
+              <div class="next-action">📅 20/6 开会后才有财务数据</div>
+            </div>
+            <span class="status-badge badge-pending">等开会</span>
           </div>
-          <span class="status-badge badge-onhold">暂停</span>
-        </div>
 
+          <div class="project-card conditional" data-project="zxl" onclick="openDetail('zxl')">
+            <div style="flex:1;min-width:0">
+              <div class="project-name">ZXL Interior Design</div>
+              <div class="project-meta">室内设计平台 · Soon Yik 70%</div>
+              <div class="next-action">⏳ 等定开会时间</div>
+            </div>
+            <span class="status-badge badge-conditional">等时间</span>
+          </div>
+
+          <div class="project-card pending" data-project="yikuang" onclick="openDetail('yikuang')">
+            <div style="flex:1;min-width:0">
+              <div class="project-name">Yi Kuang Tourism</div>
+              <div class="project-meta">旅游 · 等待第1次见面</div>
+              <div class="next-action">→ Soon Yik 安排第1次见面</div>
+            </div>
+            <span class="status-badge badge-pending">待见面</span>
+          </div>
+
+          <div class="project-card onhold" data-project="ankpet" onclick="openDetail('ankpet')">
+            <div style="flex:1;min-width:0">
+              <div class="project-name">AnkPet Pet — Dog</div>
+              <div class="project-meta">宠物行业 · 暂停</div>
+              <div class="next-action">→ 等待其他项目完成后重启</div>
+            </div>
+            <span class="status-badge badge-onhold">暂停</span>
+          </div>
+
+        </div>
       </div>
     </div>
 
+    <!-- CENTER: NEXT KEY EVENT -->
+    <div class="center-col">
+
+      <div class="decision-hero">
+        <div class="decision-urgency">⏳ 下一个关键节点</div>
+        <div class="decision-company">Catherine F&B</div>
+        <div class="decision-industry">餐饮 · Ready to Eat</div>
+        <div class="decision-question">等20/6开会后才有财务数据<br>开了会才能做 GO / NO 决定</div>
+        <div class="decision-cards">
+          <div class="decision-card go" style="opacity:0.5">
+            <div class="decision-icon">📅</div>
+            <div class="decision-label" style="color:var(--muted)">20/6</div>
+            <div class="decision-sub">开会日期<br>财务数据待确认</div>
+          </div>
+          <div class="decision-card no" style="opacity:0.5">
+            <div class="decision-icon">⏳</div>
+            <div class="decision-label" style="color:var(--muted)">ZXL</div>
+            <div class="decision-sub">等对方定时间<br>股权架构待确认</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-section">
+        <div class="section-label">下一步 · 点完成打勾</div>
+        <div class="actions-list" id="actions-list">
+
+          <div class="action-item" data-action="1" onclick="completeAction(1)">
+            <div class="action-num">01</div>
+            <div class="action-title">Catherine F&B — 等 20/6 开会拿财务数据</div>
+            <div class="action-owner">Soon Yik · Clarissa记录</div>
+            <div class="action-tag">20/6</div>
+          </div>
+
+          <div class="action-item" data-action="2" onclick="completeAction(2)">
+            <div class="action-num">02</div>
+            <div class="action-title">ZXL — 等对方定开会时间 + 股权架构</div>
+            <div class="action-owner">Terrence + Kah Sheng</div>
+            <div class="action-tag">待对方</div>
+          </div>
+
+          <div class="action-item" data-action="3" onclick="completeAction(3)">
+            <div class="action-num">03</div>
+            <div class="action-title">Yi Kuang Tourism — 安排第1次见面</div>
+            <div class="action-owner">Soon Yik · Clarissa记录</div>
+            <div class="action-tag">本周</div>
+          </div>
+
+          <div class="action-item" data-action="4" onclick="completeAction(4)">
+            <div class="action-num">04</div>
+            <div class="action-title">确认 Ming Huat 是否参与 SSC</div>
+            <div class="action-owner">Soon Yik 确认</div>
+            <div class="action-tag">待确认</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: TEAM + STAGES -->
+    <div class="right-col">
+
+      <div class="team-section">
+        <div class="section-label">团队 Team · 点开联系</div>
+        <div class="team-grid">
+
+          <div class="team-member" onclick="showMember('Soon Yik','老板 · 决策者','@soonyik')">
+            <div class="member-avatar" style="background:rgba(245,200,66,0.15);color:#f5c842;border:1px solid rgba(245,200,66,0.3)">SY</div>
+            <div><div class="member-name">Soon Yik</div><div class="member-role">老板 · 决策者</div></div>
+            <div class="member-status s-green"></div>
+          </div>
+
+          <div class="team-member" onclick="showMember('Kah Sheng','财务 Finance','kahsheng@email.com')">
+            <div class="member-avatar" style="background:rgba(0,255,136,0.1);color:#00ff88;border:1px solid rgba(0,255,136,0.25)">KS</div>
+            <div><div class="member-name">Kah Sheng</div><div class="member-role">财务 Finance</div></div>
+            <div class="member-status s-green"></div>
+          </div>
+
+          <div class="team-member" onclick="showMember('Terrence','法务 Legal','terrence@email.com')">
+            <div class="member-avatar" style="background:rgba(255,45,85,0.1);color:#ff2d55;border:1px solid rgba(255,45,85,0.25)">TR</div>
+            <div><div class="member-name">Terrence</div><div class="member-role">法务 Legal</div></div>
+            <div class="member-status s-green"></div>
+          </div>
+
+          <div class="team-member" onclick="showMember('Ming Huat','人力 HR','minghuat@email.com')">
+            <div class="member-avatar" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.25)">MH</div>
+            <div><div class="member-name">Ming Huat</div><div class="member-role">人力 HR</div></div>
+            <div class="member-status s-yellow"></div>
+          </div>
+
+          <div class="team-member" onclick="showMember('Jia Hui','营销 Marketing','jiahui@email.com')">
+            <div class="member-avatar" style="background:rgba(255,0,170,0.1);color:#ff00aa;border:1px solid rgba(255,0,170,0.25)">JH</div>
+            <div><div class="member-name">Jia Hui</div><div class="member-role">营销 Marketing</div></div>
+            <div class="member-status s-green"></div>
+          </div>
+
+          <div class="team-member" onclick="showMember('Suzanne','品牌 Branding','suzanne@email.com')">
+            <div class="member-avatar" style="background:rgba(0,245,255,0.1);color:#00f5ff;border:1px solid rgba(0,245,255,0.25)">SZ</div>
+            <div><div class="member-name">Suzanne</div><div class="member-role">品牌 Branding</div></div>
+            <div class="member-status s-green"></div>
+          </div>
+
+          <div class="team-member" onclick="showMember('Clarissa','IT & 系统','clarissa@email.com')">
+            <div class="member-avatar" style="background:rgba(245,200,66,0.15);color:#f5c842;border:1px solid rgba(245,200,66,0.3)">CL</div>
+            <div><div class="member-name">Clarissa</div><div class="member-role">IT & 系统</div></div>
+            <div class="member-status s-green"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="stages-section">
+        <div class="section-label">GO后 · 项目四阶段</div>
+        <div class="stages-track">
+          <div class="stage-block"><div class="stage-num">阶段 1</div><div class="stage-name">立项与<br>资源交接</div></div>
+          <div class="stage-block"><div class="stage-num">阶段 2</div><div class="stage-name">标准搭建<br>系统配置</div></div>
+          <div class="stage-block"><div class="stage-num">阶段 3</div><div class="stage-name">试点运营<br>验证</div></div>
+          <div class="stage-block"><div class="stage-num">阶段 4</div><div class="stage-name">全面复制<br>放大</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-stats">
+        <div class="footer-stat"><div class="footer-stat-num cyan" id="stat-projects">4</div><div class="footer-stat-label">在谈项目</div></div>
+        <div class="footer-stat"><div class="footer-stat-num amber" id="stat-waiting">2</div><div class="footer-stat-label">等开会</div></div>
+        <div class="footer-stat"><div class="footer-stat-num gold" id="stat-go">0</div><div class="footer-stat-label">已GO项目</div></div>
+        <div class="footer-stat"><div class="footer-stat-num green">7</div><div class="footer-stat-label">团队成员</div></div>
+      </div>
+      <div class="footer-right">资源共享 · 标准落地 · 系统变现</div>
+    </div>
+
+  </div><!-- end .screen -->
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <div class="ticker-item">CATHERINE F&B: <span>等20/6开会</span></div>
+      <div class="ticker-item">ZXL ID: <span>等定时间</span></div>
+      <div class="ticker-item">YI KUANG: <span>等第1次见面</span></div>
+      <div class="ticker-item">ANKPET: <span>暂停</span></div>
+      <div class="ticker-item">SSC STATUS: <span>WAITING — TAP TO REVIEW PROJECTS</span></div>
+      <div class="ticker-item">CATHERINE F&B: <span>等20/6开会</span></div>
+      <div class="ticker-item">ZXL ID: <span>等定时间</span></div>
+      <div class="ticker-item">YI KUANG: <span>等第1次见面</span></div>
+      <div class="ticker-item">ANKPET: <span>暂停</span></div>
+      <div class="ticker-item">SSC STATUS: <span>WAITING — TAP TO REVIEW PROJECTS</span></div>
+    </div>
   </div>
 
-  <!-- CENTER: GO / NO-GO -->
-  <div class="center-col">
-
-    <div class="decision-hero">
-      <div class="decision-urgency">⏳ 下一个关键节点</div>
-      <div class="decision-company">Catherine F&B</div>
-      <div class="decision-industry">餐饮 · Ready to Eat</div>
-      <div class="decision-question">等20/6开会后才有财务数据<br>开了会才能做 GO / NO 决定</div>
-      <div class="decision-cards">
-        <div class="decision-card go" style="opacity:0.5; cursor:default;">
-          <div class="decision-icon">📅</div>
-          <div class="decision-label" style="color:var(--muted);">20/6</div>
-          <div class="decision-sub">开会日期<br>财务数据待确认</div>
+  <!-- DETAIL PANEL -->
+  <div class="detail-overlay" id="detail-overlay" onclick="closeDetailOnOverlay(event)">
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-header">
+        <div>
+          <div class="detail-company" id="detail-company">—</div>
+          <div class="detail-industry" id="detail-industry">—</div>
         </div>
-        <div class="decision-card no" style="opacity:0.5; cursor:default;">
-          <div class="decision-icon">⏳</div>
-          <div class="decision-label" style="color:var(--muted);">ZXL</div>
-          <div class="decision-sub">等对方定时间<br>股权架构待确认</div>
+        <div class="detail-close" onclick="closeDetail()">✕</div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-section-title">项目状态</div>
+        <div class="detail-field">
+          <div class="detail-field-label">当前状态</div>
+          <div class="detail-field-value highlight" id="detail-status">—</div>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-section-title">下一步行动</div>
+        <div class="detail-field">
+          <div class="detail-field-value" id="detail-next-action">—</div>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-section-title">倒计时</div>
+        <div class="detail-field">
+          <div class="detail-field-value highlight" id="detail-countdown">—</div>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-section-title">备注</div>
+        <textarea class="detail-notes" id="detail-notes" placeholder="点击写入备注..." oninput="saveNote()"></textarea>
+      </div>
+      <div class="detail-footer">
+        <div class="big-btn btn-go" onclick="triggerGo()">
+          <span>✅ GO</span>
+          <span class="big-btn-sub">签协议 · 成立合资公司</span>
+        </div>
+        <div class="big-btn btn-no" onclick="triggerNo()">
+          <span>✗ 否决</span>
+          <span class="big-btn-sub">条件谈不拢 · 终止</span>
         </div>
       </div>
     </div>
-
-    <!-- ACTIONS -->
-    <div class="actions-section">
-      <div class="section-label">下一步 · 行动清单</div>
-      <div class="actions-list">
-
-        <div class="action-item">
-          <div class="action-num">01</div>
-          <div class="action-title">Catherine F&B — 等 20/6 开会拿财务数据</div>
-          <div class="action-owner">Soon Yik · Clarissa记录</div>
-          <div class="action-tag">20/6</div>
-        </div>
-
-        <div class="action-item">
-          <div class="action-num">02</div>
-          <div class="action-title">ZXL — 等对方定开会时间 + 股权架构</div>
-          <div class="action-owner">Terrence + Kah Sheng</div>
-          <div class="action-tag">待对方</div>
-        </div>
-
-        <div class="action-item">
-          <div class="action-num">03</div>
-          <div class="action-title">Yi Kuang Tourism — 安排第1次见面</div>
-          <div class="action-owner">Soon Yik · Clarissa记录</div>
-          <div class="action-tag">本周</div>
-        </div>
-
-        <div class="action-item">
-          <div class="action-num">04</div>
-          <div class="action-title">确认 Ming Huat 是否参与 SSC</div>
-          <div class="action-owner">Soon Yik 确认</div>
-          <div class="action-tag">待确认</div>
-        </div>
-
-      </div>
-    </div>
-
   </div>
 
-  <!-- RIGHT: TEAM + STAGES -->
-  <div class="right-col">
-
-    <div class="team-section">
-      <div class="section-label">团队 Team</div>
-      <div class="team-grid">
-
-        <div class="team-member">
-          <div class="member-avatar" style="background:rgba(245,200,66,0.15);color:#f5c842;border:1px solid rgba(245,200,66,0.3);">SY</div>
-          <div><div class="member-name">Soon Yik</div><div class="member-role">老板 · 决策者</div></div>
-          <div class="member-status s-green"></div>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar" style="background:rgba(0,255,136,0.1);color:#00ff88;border:1px solid rgba(0,255,136,0.25);">KS</div>
-          <div><div class="member-name">Kah Sheng</div><div class="member-role">财务 Finance</div></div>
-          <div class="member-status s-green"></div>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar" style="background:rgba(255,45,85,0.1);color:#ff2d55;border:1px solid rgba(255,45,85,0.25);">TR</div>
-          <div><div class="member-name">Terrence</div><div class="member-role">法务 Legal</div></div>
-          <div class="member-status s-green"></div>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.25);">MH</div>
-          <div><div class="member-name">Ming Huat</div><div class="member-role">人力 HR</div></div>
-          <div class="member-status s-yellow"></div>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar" style="background:rgba(255,0,170,0.1);color:#ff00aa;border:1px solid rgba(255,0,170,0.25);">JH</div>
-          <div><div class="member-name">Jia Hui</div><div class="member-role">营销 Marketing</div></div>
-          <div class="member-status s-green"></div>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar" style="background:rgba(0,245,255,0.1);color:#00f5ff;border:1px solid rgba(0,245,255,0.25);">SZ</div>
-          <div><div class="member-name">Suzanne</div><div class="member-role">品牌 Branding</div></div>
-          <div class="member-status s-green"></div>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar" style="background:rgba(245,200,66,0.15);color:#f5c842;border:1px solid rgba(245,200,66,0.3);">CL</div>
-          <div><div class="member-name">Clarissa</div><div class="member-role">IT & 系统</div></div>
-          <div class="member-status s-green"></div>
-        </div>
-
+  <!-- CONFIRM MODAL -->
+  <div class="confirm-modal" id="confirm-modal">
+    <div class="confirm-box">
+      <div class="confirm-icon" id="confirm-icon">❓</div>
+      <div class="confirm-title" id="confirm-title">确认决定？</div>
+      <div class="confirm-sub" id="confirm-sub">这个操作会更新项目状态</div>
+      <div class="confirm-actions">
+        <div class="confirm-no" onclick="cancelConfirm()">取消</div>
+        <div class="confirm-yes" id="confirm-yes-btn" onclick="executeDecision()">确认</div>
       </div>
     </div>
-
-    <div class="stages-section">
-      <div class="section-label">GO后 · 项目四阶段</div>
-      <div class="stages-track">
-        <div class="stage-block">
-          <div class="stage-num">阶段 1</div>
-          <div class="stage-name">立项与<br>资源交接</div>
-        </div>
-        <div class="stage-block">
-          <div class="stage-num">阶段 2</div>
-          <div class="stage-name">标准搭建<br>系统配置</div>
-        </div>
-        <div class="stage-block">
-          <div class="stage-num">阶段 3</div>
-          <div class="stage-name">试点运营<br>验证</div>
-        </div>
-        <div class="stage-block">
-          <div class="stage-num">阶段 4</div>
-          <div class="stage-name">全面复制<br>放大</div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="footer-stats">
-      <div class="footer-stat">
-        <div class="footer-stat-num cyan">4</div>
-        <div class="footer-stat-label">在谈项目</div>
-      </div>
-      <div class="footer-stat">
-        <div class="footer-stat-num amber">2</div>
-        <div class="footer-stat-label">等开会</div>
-      </div>
-      <div class="footer-stat">
-        <div class="footer-stat-num gold">0</div>
-        <div class="footer-stat-label">已GO项目</div>
-      </div>
-      <div class="footer-stat">
-        <div class="footer-stat-num green">7</div>
-        <div class="footer-stat-label">团队成员</div>
-      </div>
-    </div>
-    <div class="footer-right">资源共享 · 标准落地 · 系统变现</div>
+  <!-- RESULT FLASH -->
+  <div class="result-flash" id="result-flash">
+    <div class="result-flash-text" id="result-flash-text">GO!</div>
   </div>
 
-    <div class="ticker-item">CATHERINE F&B: <span>等20/6开会</span></div>
-    <div class="ticker-item">ZXL ID: <span>等定时间</span></div>
-    <div class="ticker-item">YI KUANG: <span>等第1次见面</span></div>
-    <div class="ticker-item">ANKPET: <span>暂停</span></div>
-    <div class="ticker-item">SSC STATUS: <span>WAITING — NO ACTIVE DECISION</span></div>
-    <div class="ticker-item">CATHERINE F&B: <span>等20/6开会</span></div>
-    <div class="ticker-item">ZXL ID: <span>等定时间</span></div>
-    <div class="ticker-item">YI KUANG: <span>等第1次见面</span></div>
-    <div class="ticker-item">ANKPET: <span>暂停</span></div>
-    <div class="ticker-item">SSC STATUS: <span>WAITING — NO ACTIVE DECISION</span></div>
-  </div>
-</div>
-
-</div><!-- end .screen -->
 </div><!-- end .container -->
 
 <script>
 // ════════════════════════════════════════
-//  SOUND ENGINE (Web Audio API)
+//  PROJECT DATA
+// ════════════════════════════════════════
+const projects = {
+  catherine: {
+    name: 'Catherine F&B',
+    industry: '餐饮 · Ready to Eat',
+    status: '等开会',
+    nextAction: '📅 20/6 开会后才有财务数据',
+    countdownTarget: '2026-06-20',
+    notes: ''
+  },
+  zxl: {
+    name: 'ZXL Interior Design',
+    industry: '室内设计平台 · Soon Yik 70%',
+    status: '等时间',
+    nextAction: '⏳ 等定开会时间 + 股权架构确认',
+    countdownTarget: null,
+    notes: ''
+  },
+  yikuang: {
+    name: 'Yi Kuang Tourism',
+    industry: '旅游 · 等待第1次见面',
+    status: '待见面',
+    nextAction: '→ Soon Yik 安排第1次见面',
+    countdownTarget: null,
+    notes: ''
+  },
+  ankpet: {
+    name: 'AnkPet Pet — Dog',
+    industry: '宠物行业 · 暂停',
+    status: '暂停',
+    nextAction: '→ 等待其他项目完成后重启',
+    countdownTarget: null,
+    notes: ''
+  }
+};
+
+let currentProject = null;
+let pendingDecision = null;
+
+// ════════════════════════════════════════
+//  SOUND ENGINE
 // ════════════════════════════════════════
 let audioCtx = null;
 
@@ -933,86 +774,215 @@ function initAudio() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-function playTone(freq, type, duration, vol) {
+function tone(freq, type, dur, vol) {
   if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start();
-  osc.stop(audioCtx.currentTime + duration);
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  g.gain.setValueAtTime(vol, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + dur);
 }
 
 function playAmbient() {
   if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(55, audioCtx.currentTime);
-  gain.gain.setValueAtTime(0.012, audioCtx.currentTime);
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start();
-  // Subtle pulse
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(55, audioCtx.currentTime);
+  g.gain.setValueAtTime(0.012, audioCtx.currentTime);
+  o.connect(g); g.connect(audioCtx.destination); o.start();
   setInterval(() => {
     if (!audioCtx) return;
-    gain.gain.setValueAtTime(0.008, audioCtx.currentTime);
-    setTimeout(() => {
-      if (!audioCtx) return;
-      gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
-    }, 2000);
+    g.gain.setValueAtTime(0.008, audioCtx.currentTime);
+    setTimeout(() => { if(audioCtx) g.gain.setValueAtTime(0.015, audioCtx.currentTime); }, 2000);
   }, 4000);
 }
 
-// Init ambient on first interaction
-document.addEventListener('click', () => {
-  initAudio();
-  playAmbient();
-}, { once: true });
+function playClick() { tone(800, 'sine', 0.08, 0.06); }
+function playDone() { [523,659].forEach((f,i) => setTimeout(() => tone(f,'sine',0.3,0.1), i*80)); }
+
+function playGoSound() {
+  [523,659,784,1047].forEach((f,i) => setTimeout(() => tone(f,'sine',0.8,0.15), i*80));
+  setTimeout(() => tone(130,'triangle',1.2,0.1), 300);
+  tone(1200,'square',0.05,0.05);
+}
+
+function playNoSound() {
+  [400,300,200].forEach((f,i) => setTimeout(() => tone(f,'sawtooth',0.4,0.08), i*120));
+  tone(150,'square',0.3,0.06);
+}
+
+function playPanelOpen() { tone(600, 'sine', 0.12, 0.08); }
+function playPanelClose() { tone(400, 'sine', 0.1, 0.06); }
+
+// First click activates audio
+document.addEventListener('click', () => { initAudio(); playAmbient(); }, { once: true });
 
 // ════════════════════════════════════════
 //  CLOCK
 // ════════════════════════════════════════
 function updateClock() {
   const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('clock').textContent = h+':'+m;
-  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  const mo  = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  document.getElementById('dateStr').textContent =
-    days[now.getDay()] + ' · ' + now.getDate() + ' ' + mo[now.getMonth()] + ' ' + now.getFullYear();
+  document.getElementById('clock').textContent = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const days=['SUN','MON','TUE','WED','THU','FRI','SAT'], mo=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('dateStr').textContent = days[now.getDay()]+' · '+now.getDate()+' '+mo[now.getMonth()]+' '+now.getFullYear();
 }
 updateClock();
 setInterval(updateClock, 10000);
 
 // ════════════════════════════════════════
-//  MONEY COUNTER ANIMATION
+//  MONEY COUNTER
 // ════════════════════════════════════════
-function animateMoney(target, suffix) {
+function animateMoney(target) {
   const el = document.getElementById('money-display');
-  const start = 0;
-  const duration = 2000;
-  const startTime = performance.now();
-
-  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
-
+  const start = performance.now();
+  const dur = 2000;
   function step(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const value = Math.floor(start + (target - start) * easeOut(progress));
-    el.textContent = 'RM ' + value.toLocaleString() + suffix;
-    if (progress < 1) requestAnimationFrame(step);
+    const p = Math.min((now-start)/dur, 1);
+    const val = Math.floor(target * (1 - Math.pow(1-p, 3)));
+    el.textContent = 'RM ' + val.toLocaleString();
+    if (p < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
+setTimeout(() => animateMoney(0), 500);
 
-// Animate on load
-setTimeout(() => animateMoney(0, ''), 500);
+// ════════════════════════════════════════
+//  DETAIL PANEL
+// ════════════════════════════════════════
+function openDetail(key) {
+  initAudio(); playClick();
+  currentProject = key;
+  const p = projects[key];
+  document.getElementById('detail-company').textContent = p.name;
+  document.getElementById('detail-industry').textContent = p.industry;
+  document.getElementById('detail-status').textContent = p.status;
+  document.getElementById('detail-next-action').textContent = p.nextAction;
+  document.getElementById('detail-notes').value = p.notes || '';
+
+  // Countdown
+  const cdEl = document.getElementById('detail-countdown');
+  if (p.countdownTarget) {
+    const target = new Date(p.countdownTarget);
+    const now = new Date();
+    const diff = Math.ceil((target - now) / (1000*60*60*24));
+    if (diff > 0) {
+      cdEl.textContent = '距离开会还有 ' + diff + ' 天';
+    } else if (diff === 0) {
+      cdEl.textContent = '今天开会！';
+    } else {
+      cdEl.textContent = '已过开会日期';
+    }
+  } else {
+    cdEl.textContent = '无固定日期';
+  }
+
+  document.getElementById('detail-overlay').classList.add('open');
+  playPanelOpen();
+}
+
+function closeDetail() {
+  initAudio(); playPanelClose();
+  document.getElementById('detail-overlay').classList.remove('open');
+  currentProject = null;
+}
+
+function closeDetailOnOverlay(e) {
+  if (e.target === document.getElementById('detail-overlay')) closeDetail();
+}
+
+function saveNote() {
+  if (!currentProject) return;
+  projects[currentProject].notes = document.getElementById('detail-notes').value;
+}
+
+// ════════════════════════════════════════
+//  GO / NO DECISION
+// ════════════════════════════════════════
+function triggerGo() {
+  initAudio(); playClick();
+  pendingDecision = 'go';
+  document.getElementById('confirm-icon').textContent = '✅';
+  document.getElementById('confirm-title').textContent = '确认 GO？';
+  document.getElementById('confirm-sub').textContent = projects[currentProject].name + ' 将标记为已GO，进入SSC落地体系';
+  document.getElementById('confirm-yes-btn').style.cssText = 'background:rgba(0,255,136,0.15);border-color:rgba(0,255,136,0.5);color:var(--green)';
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+function triggerNo() {
+  initAudio(); playClick();
+  pendingDecision = 'no';
+  document.getElementById('confirm-icon').textContent = '✗';
+  document.getElementById('confirm-title').textContent = '确认否决？';
+  document.getElementById('confirm-sub').textContent = projects[currentProject].name + ' 将标记为已否决，终止项目';
+  document.getElementById('confirm-yes-btn').style.cssText = 'background:rgba(255,45,85,0.15);border-color:rgba(255,45,85,0.5);color:var(--red)';
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+function cancelConfirm() {
+  initAudio(); playClick();
+  document.getElementById('confirm-modal').classList.remove('open');
+  pendingDecision = null;
+}
+
+function executeDecision() {
+  initAudio();
+  document.getElementById('confirm-modal').classList.remove('open');
+
+  const card = document.querySelector('.project-card[data-project="'+currentProject+'"]');
+  const flash = document.getElementById('result-flash');
+  const flashText = document.getElementById('result-flash-text');
+
+  if (pendingDecision === 'go') {
+    playGoSound();
+    card.className = 'project-card go-card';
+    card.querySelector('.status-badge').className = 'status-badge badge-go';
+    card.querySelector('.status-badge').textContent = '已GO';
+    card.querySelector('.next-action').textContent = '✅ 已GO · 进入SSC落地体系';
+    flashText.textContent = '✅ GO!';
+    flash.className = 'result-flash go-flash open';
+    document.getElementById('stat-go').textContent = parseInt(document.getElementById('stat-go').textContent) + 1;
+    document.getElementById('stat-waiting').textContent = Math.max(0, parseInt(document.getElementById('stat-waiting').textContent) - 1);
+    projects[currentProject].status = '已GO';
+  } else {
+    playNoSound();
+    card.className = 'project-card no-card';
+    card.querySelector('.status-badge').className = 'status-badge badge-no';
+    card.querySelector('.status-badge').textContent = '已否决';
+    card.querySelector('.next-action').textContent = '✗ 已否决';
+    flashText.textContent = '✗ 否决';
+    flash.className = 'result-flash no-flash open';
+    document.getElementById('stat-waiting').textContent = Math.max(0, parseInt(document.getElementById('stat-waiting').textContent) - 1);
+    projects[currentProject].status = '已否决';
+  }
+
+  setTimeout(() => { flash.className = 'result-flash'; closeDetail(); }, 1500);
+  pendingDecision = null;
+}
+
+// ════════════════════════════════════════
+//  ACTION ITEMS
+// ════════════════════════════════════════
+function completeAction(id) {
+  initAudio(); playDone();
+  const item = document.querySelector('.action-item[data-action="'+id+'"]');
+  item.classList.add('done');
+  item.onclick = null;
+}
+
+// ════════════════════════════════════════
+//  TEAM MEMBER TOAST
+// ════════════════════════════════════════
+function showMember(name, role, contact) {
+  initAudio(); playClick();
+  const flash = document.getElementById('result-flash');
+  const flashText = document.getElementById('result-flash-text');
+  flashText.textContent = name + '\n' + role + '\n' + contact;
+  flash.className = 'result-flash open';
+  flash.style.background = 'rgba(0,245,255,0.12)';
+  setTimeout(() => { flash.className = 'result-flash'; flash.style.background = ''; }, 2000);
+}
 
 // ════════════════════════════════════════
 //  PARTICLE CANVAS
@@ -1032,52 +1002,42 @@ window.addEventListener('resize', resize);
 class Particle {
   constructor() { this.reset(); }
   reset() {
-    this.x = Math.random() * W;
-    this.y = Math.random() * H;
-    this.vx = (Math.random() - 0.5) * 0.4;
-    this.vy = (Math.random() - 0.5) * 0.4;
-    this.size = Math.random() * 1.5 + 0.5;
-    this.alpha = Math.random() * 0.4 + 0.1;
-    this.color = Math.random() > 0.75 ? '#ff00aa' : '#00f5ff';
+    this.x = Math.random()*W; this.y = Math.random()*H;
+    this.vx = (Math.random()-0.5)*0.4; this.vy = (Math.random()-0.5)*0.4;
+    this.size = Math.random()*1.5+0.5;
+    this.alpha = Math.random()*0.4+0.1;
+    this.color = Math.random()>0.75 ? '#ff00aa' : '#00f5ff';
   }
   update() {
-    this.x += this.vx; this.y += this.vy;
-    if (this.x < 0 || this.x > W) this.vx *= -1;
-    if (this.y < 0 || this.y > H) this.vy *= -1;
+    this.x+=this.vx; this.y+=this.vy;
+    if(this.x<0||this.x>W) this.vx*=-1;
+    if(this.y<0||this.y>H) this.vy*=-1;
   }
   draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.alpha;
-    ctx.fill();
-    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=this.color; ctx.globalAlpha=this.alpha; ctx.fill(); ctx.globalAlpha=1;
   }
 }
 
-for (let i = 0; i < 70; i++) particles.push(new Particle());
+for (let i=0;i<70;i++) particles.push(new Particle());
 
 function drawLines() {
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 130) {
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = 'rgba(0,245,255,0.05)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
+  for (let i=0;i<particles.length;i++) {
+    for (let j=i+1;j<particles.length;j++) {
+      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if (dist<130) {
+        ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y);
+        ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.strokeStyle='rgba(0,245,255,0.05)'; ctx.lineWidth=0.5; ctx.stroke();
       }
     }
   }
 }
 
 function animate() {
-  ctx.clearRect(0, 0, W, H);
-  particles.forEach(p => { p.update(); p.draw(); });
+  ctx.clearRect(0,0,W,H);
+  particles.forEach(p=>{p.update();p.draw()});
   drawLines();
   requestAnimationFrame(animate);
 }
