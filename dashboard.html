@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Action Pipeline</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2a2d3a;
+      --text: #e4e4e7;
+      --muted: #71717a;
+      --accent: #6366f1;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --purple: #a855f7;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    /* ── PAT Setup Modal ── */
+    #pat-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    #pat-modal.hidden { display: none; }
+
+    .modal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 480px;
+      width: 90%;
+    }
+    .modal-card h2 { font-size: 20px; margin-bottom: 8px; }
+    .modal-card p { color: var(--muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+    .modal-card a { color: var(--accent); text-decoration: none; }
+    .modal-card a:hover { text-decoration: underline; }
+
+    input[type="password"] {
+      width: 100%; padding: 10px 14px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      font-size: 14px; margin-bottom: 12px;
+    }
+    input[type="password"]:focus { outline: none; border-color: var(--accent); }
+
+    .btn {
+      padding: 8px 18px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 14px; cursor: pointer;
+    }
+    .btn:hover { opacity: 0.9; }
+
+    /* ── Header ── */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 28px;
+    }
+    header h1 { font-size: 22px; font-weight: 600; }
+    .header-right { display: flex; gap: 10px; align-items: center; }
+    .badge {
+      padding: 4px 10px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; font-size: 12px; color: var(--muted);
+    }
+    #last-updated { font-size: 12px; color: var(--muted); }
+    #refresh-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    #clear-pat { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; }
+
+    /* ── Stats ── */
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px; margin-bottom: 28px;
+    }
+    .stat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px;
+    }
+    .stat-value { font-size: 28px; font-weight: 700; }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .stat.red .stat-value { color: var(--red); }
+    .stat.yellow .stat-value { color: var(--yellow); }
+    .stat.green .stat-value { color: var(--green); }
+    .stat.blue .stat-value { color: var(--blue); }
+
+    /* ── Priority Legend ── */
+    .legend {
+      display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot.high { background: var(--red); }
+    .dot.medium { background: var(--yellow); }
+    .dot.low { background: var(--green); }
+
+    /* ── Category ── */
+    .category { margin-bottom: 32px; }
+    .category-title {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Kanban Columns ── */
+    .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .col { min-width: 0; }
+    .col-header {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 10px; padding: 6px 8px;
+      background: var(--card); border-radius: 8px;
+      text-align: center;
+    }
+    .col-header span {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    .col.not-started .col-header { color: var(--muted); }
+    .col.in-progress .col-header { color: var(--blue); }
+    .col.waiting .col-header { color: var(--yellow); }
+    .col.completed .col-header { color: var(--green); }
+
+    .col.not-started .col-header span { background: rgba(113,113,122,0.2); color: var(--muted); }
+    .col.in-progress .col-header span { background: rgba(59,130,246,0.2); color: var(--blue); }
+    .col.waiting .col-header span { background: rgba(234,179,8,0.2); color: var(--yellow); }
+    .col.completed .col-header span { background: rgba(34,197,94,0.2); color: var(--green); }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-left: 3px solid transparent;
+    }
+    .card.overdue { border-left-color: var(--red); }
+    .card.due-soon { border-left-color: var(--yellow); }
+    .card.normal { border-left-color: var(--border); }
+    .card.completed-card { border-left-color: var(--green); opacity: 0.7; }
+
+    .card-title {
+      font-size: 13px; font-weight: 500;
+      margin-bottom: 6px; line-height: 1.4;
+    }
+    .card-title.overdue-text { color: var(--red); }
+    .card-title.completed-text { text-decoration: line-through; color: var(--muted); }
+
+    .card-meta {
+      display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+    }
+    .tag {
+      font-size: 10px; padding: 2px 7px;
+      border-radius: 6px; font-weight: 500;
+    }
+    .tag.high { background: rgba(239,68,68,0.15); color: var(--red); }
+    .tag.medium { background: rgba(234,179,8,0.15); color: var(--yellow); }
+    .tag.low { background: rgba(34,197,94,0.15); color: var(--green); }
+
+    .tag.pic {
+      background: rgba(99,102,241,0.15); color: var(--accent);
+    }
+
+    .tag.deadline {
+      background: rgba(113,113,122,0.15); color: var(--muted);
+    }
+    .tag.deadline.overdue {
+      background: rgba(239,68,68,0.15); color: var(--red);
+    }
+    .tag.deadline.due-soon {
+      background: rgba(234,179,8,0.15); color: var(--yellow);
+    }
+
+    .empty-col {
+      text-align: center;
+      padding: 20px 8px;
+      color: var(--muted);
+      font-size: 12px;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+    }
+
+    /* ── Loading ── */
+    #loading {
+      text-align: center; padding: 60px;
+      color: var(--muted); font-size: 14px;
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error ── */
+    #error-msg {
+      display: none;
+      background: rgba(239,68,68,0.1); border: 1px solid var(--red);
+      border-radius: 10px; padding: 16px; margin-bottom: 20px;
+      font-size: 13px; color: var(--red);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .kanban { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .kanban { grid-template-columns: 1fr; }
+      body { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PAT Setup Modal -->
+<div id="pat-modal">
+  <div class="modal-card">
+    <h2>🔑 Airtable PAT Required</h2>
+    <p>
+      This dashboard reads from your Airtable "CEO Command Center" base.<br/>
+      Your PAT is stored only in your browser session and never sent to any server.
+    </p>
+    <p style="font-size:12px; color: var(--muted);">
+      Get your PAT at<br/>
+      <a href="https://airtable.com/create/tokens" target="_blank">airtable.com/create/tokens</a><br/>
+      Scope: <code style="color:var(--accent)">data.records:read</code>
+    </p>
+    <input type="password" id="pat-input" placeholder="pat..." />
+    <button class="btn" onclick="submitPat()">Open Dashboard →</button>
+  </div>
+</div>
+
+<!-- Main Dashboard -->
+<header>
+  <div>
+    <h1>⚡ Action Pipeline</h1>
+    <div id="last-updated" style="margin-top:4px;"></div>
+  </div>
+  <div class="header-right">
+    <span class="badge" id="total-count"></span>
+    <button id="refresh-btn" onclick="load()">↻ Refresh</button>
+    <button id="clear-pat" onclick="clearPat()">Clear PAT</button>
+  </div>
+</header>
+
+<div id="error-msg"></div>
+
+<div id="loading">
+  <div class="spinner"></div>
+  Loading...
+</div>
+
+<div id="stats" class="stats" style="display:none;"></div>
+
+<div class="legend" style="display:none;" id="legend">
+  <div class="legend-item"><div class="dot high"></div> High priority</div>
+  <div class="legend-item"><div class="dot medium"></div> Medium priority</div>
+  <div class="legend-item"><div class="dot low"></div> Low priority</div>
+</div>
+
+<div id="board" style="display:none;"></div>
+
+<script>
+  const BASE_ID = 'app9EogsZVy729rVx';
+  const TABLE_ID = 'tblcW4oq4F2UQquV0';
+
+  // ── PAT Management ──
+  function getPat() { return sessionStorage.getItem('airtable_pat'); }
+
+  function submitPat() {
+    const pat = document.getElementById('pat-input').value.trim();
+    if (!pat) return;
+    sessionStorage.setItem('airtable_pat', pat);
+    document.getElementById('pat-modal').classList.add('hidden');
+    load();
+  }
+
+  function clearPat() {
+    sessionStorage.removeItem('airtable_pat');
+    location.reload();
+  }
+
+  // ── API ──
+  async function fetchRecords(pat) {
+    const records = [];
+    let offset = null;
+    do {
+      let url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?sort[0][field]=Deadline&sort[0][direction]=asc`;
+      if (offset) url += `&offset=${offset}`;
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${pat}` }
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error?.message || `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      records.push(...(data.records || []));
+      offset = data.offset;
+    } while (offset);
+    return records;
+  }
+
+  // ── Load ──
+  async function load() {
+    const pat = getPat();
+    if (!pat) return;
+
+    const loading = document.getElementById('loading');
+    const errorEl = document.getElementById('error-msg');
+    const statsEl = document.getElementById('stats');
+    const legendEl = document.getElementById('legend');
+    const boardEl = document.getElementById('board');
+
+    loading.style.display = 'block';
+    errorEl.style.display = 'none';
+    statsEl.style.display = 'none';
+    legendEl.style.display = 'none';
+    boardEl.style.display = 'none';
+
+    try {
+      const records = await fetchRecords(pat);
+
+      // Group by category
+      const cats = {};
+      const catOrder = ['BRAND', 'IP', 'BIZ', 'ADMIN', 'OTHER'];
+
+      records.forEach(r => {
+        const f = r.fields;
+        const cat = f['Category'] || 'OTHER';
+        if (!cats[cat]) cats[cat] = {};
+        const status = f['Status'] || 'Not Started';
+        if (!cats[cat][status]) cats[cat][status] = [];
+        cats[cat][status].push({ id: r.id, fields: f });
+      });
+
+      // Stats
+      const now = new Date();
+      const overdue = records.filter(r => {
+        const d = parseDate(r.fields['Deadline']);
+        return d && d < now && r.fields['Status'] !== 'Completed';
+      }).length;
+
+      const inProgress = records.filter(r => r.fields['Status'] === 'In Progress').length;
+      const waiting = records.filter(r => r.fields['Status'] === 'Waiting').length;
+      const total = records.length;
+
+      statsEl.innerHTML = `
+        <div class="stat red"><div class="stat-value">${overdue}</div><div class="stat-label">🔴 Overdue</div></div>
+        <div class="stat blue"><div class="stat-value">${inProgress}</div><div class="stat-label">🔵 In Progress</div></div>
+        <div class="stat yellow"><div class="stat-value">${waiting}</div><div class="stat-label">🟡 Waiting</div></div>
+        <div class="stat green"><div class="stat-value">${total}</div><div class="stat-label">Total Items</div></div>
+      `;
+
+      document.getElementById('total-count').textContent = `${total} items`;
+      document.getElementById('last-updated').textContent = `Updated ${new Date().toLocaleTimeString('MYT', {hour:'2-digit',minute:'2-digit'})}`;
+
+      // Kanban columns per category
+      const statuses = ['Not Started', 'In Progress', 'Waiting', 'Completed'];
+
+      let html = '';
+      for (const cat of catOrder) {
+        if (!cats[cat]) continue;
+        html += `<div class="category">`;
+        html += `<div class="category-title">${cat}</div>`;
+        html += `<div class="kanban">`;
+
+        for (const status of statuses) {
+          const items = cats[cat][status] || [];
+          const colClass = status.toLowerCase().replace(' ', '-');
+          html += `<div class="col ${colClass}">`;
+          html += `<div class="col-header">${status} <span>${items.length}</span></div>`;
+
+          if (items.length === 0) {
+            html += `<div class="empty-col">—</div>`;
+          } else {
+            items.forEach(item => {
+              html += renderCard(item);
+            });
+          }
+          html += `</div>`;
+        }
+        html += `</div></div>`;
+      }
+
+      boardEl.innerHTML = html;
+      loading.style.display = 'none';
+      statsEl.style.display = 'grid';
+      legendEl.style.display = 'flex';
+      boardEl.style.display = 'block';
+
+    } catch (e) {
+      loading.style.display = 'none';
+      errorEl.textContent = '❌ ' + e.message;
+      errorEl.style.display = 'block';
+    }
+  }
+
+  function renderCard(item) {
+    const f = item.fields;
+    const now = new Date();
+    const deadline = parseDate(f['Deadline']);
+    const isOverdue = deadline && deadline < now && f['Status'] !== 'Completed';
+    const isDueSoon = deadline && !isOverdue && (deadline - now) < 3 * 86400000;
+
+    const cardClass = f['Status'] === 'Completed' ? 'completed-card'
+      : isOverdue ? 'overdue' : isDueSoon ? 'due-soon' : 'normal';
+    const titleClass = f['Status'] === 'Completed' ? 'completed-text'
+      : isOverdue ? 'overdue-text' : '';
+
+    const deadlineClass = isOverdue ? 'overdue' : isDueSoon ? 'due-soon' : '';
+    const deadlineLabel = deadline ? formatDate(deadline) : 'No deadline';
+
+    let html = `<div class="card ${cardClass}">`;
+    html += `<div class="card-title ${titleClass}">${esc(f['Action Item'] || '(No title)')}</div>`;
+    html += `<div class="card-meta">`;
+
+    if (f['Priority']) {
+      html += `<span class="tag ${f['Priority'].toLowerCase()}">${f['Priority']}</span>`;
+    }
+    if (f['Person In Charge']) {
+      html += `<span class="tag pic">${f['Person In Charge']}</span>`;
+    }
+    html += `<span class="tag deadline ${deadlineClass}">${deadlineLabel}</span>`;
+    html += `</div></div>`;
+    return html;
+  }
+
+  function parseDate(v) {
+    if (!v) return null;
+    if (v instanceof Date) return v;
+    const d = new Date(v);
+    return isNaN(d) ? null : d;
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ── Init ──
+  if (getPat()) {
+    document.getElementById('pat-modal').classList.add('hidden');
+    load();
+  } else {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('pat-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') submitPat();
+    });
+    document.getElementById('pat-input').focus();
+  }
+</script>
+</body>
+</html>
