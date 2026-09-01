@@ -1,0 +1,30 @@
+{
+  "name": "soonyikssc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "jarvis-notion.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clarissaaibot-tech/soonyikssc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/clarissaaibot-tech/soonyikssc/issues"
+  },
+  "homepage": "https://github.com/clarissaaibot-tech/soonyikssc#readme",
+  "dependencies": {
+    "next": "^16.3.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0"
+  }
+}
