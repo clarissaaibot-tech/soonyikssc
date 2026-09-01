@@ -29,36 +29,6 @@
       padding: 24px;
     }
 
-    /* ── PAT Setup Modal ── */
-    #pat-modal {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1000;
-    }
-    #pat-modal.hidden { display: none; }
-
-    .modal-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 40px;
-      max-width: 480px;
-      width: 90%;
-    }
-    .modal-card h2 { font-size: 20px; margin-bottom: 8px; }
-    .modal-card p { color: var(--muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
-    .modal-card a { color: var(--accent); text-decoration: none; }
-    .modal-card a:hover { text-decoration: underline; }
-
-    input[type="password"] {
-      width: 100%; padding: 10px 14px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text);
-      font-size: 14px; margin-bottom: 12px;
-    }
-    input[type="password"]:focus { outline: none; border-color: var(--accent); }
-
     .btn {
       padding: 8px 18px;
       background: var(--accent); color: #fff;
@@ -81,7 +51,6 @@
     }
     #last-updated { font-size: 12px; color: var(--muted); }
     #refresh-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-    #clear-pat { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; }
 
     /* ── Stats ── */
     .stats {
@@ -235,24 +204,6 @@
 </head>
 <body>
 
-<!-- PAT Setup Modal -->
-<div id="pat-modal">
-  <div class="modal-card">
-    <h2>🔑 Airtable PAT Required</h2>
-    <p>
-      This dashboard reads from your Airtable "CEO Command Center" base.<br/>
-      Your PAT is stored only in your browser session and never sent to any server.
-    </p>
-    <p style="font-size:12px; color: var(--muted);">
-      Get your PAT at<br/>
-      <a href="https://airtable.com/create/tokens" target="_blank">airtable.com/create/tokens</a><br/>
-      Scope: <code style="color:var(--accent)">data.records:read</code>
-    </p>
-    <input type="password" id="pat-input" placeholder="pat..." />
-    <button class="btn" onclick="submitPat()">Open Dashboard →</button>
-  </div>
-</div>
-
 <!-- Main Dashboard -->
 <header>
   <div>
@@ -262,7 +213,6 @@
   <div class="header-right">
     <span class="badge" id="total-count"></span>
     <button id="refresh-btn" onclick="load()">↻ Refresh</button>
-    <button id="clear-pat" onclick="clearPat()">Clear PAT</button>
   </div>
 </header>
 
@@ -287,48 +237,19 @@
   const BASE_ID = 'app9EogsZVy729rVx';
   const TABLE_ID = 'tblcW4oq4F2UQquV0';
 
-  // ── PAT Management ──
-  function getPat() { return sessionStorage.getItem('airtable_pat'); }
-
-  function submitPat() {
-    const pat = document.getElementById('pat-input').value.trim();
-    if (!pat) return;
-    sessionStorage.setItem('airtable_pat', pat);
-    document.getElementById('pat-modal').classList.add('hidden');
-    load();
-  }
-
-  function clearPat() {
-    sessionStorage.removeItem('airtable_pat');
-    location.reload();
-  }
-
   // ── API ──
-  async function fetchRecords(pat) {
-    const records = [];
-    let offset = null;
-    do {
-      let url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?sort[0][field]=Deadline&sort[0][direction]=asc`;
-      if (offset) url += `&offset=${offset}`;
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${pat}` }
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error?.message || `HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      records.push(...(data.records || []));
-      offset = data.offset;
-    } while (offset);
-    return records;
+  async function fetchRecords() {
+    const res = await fetch('/api/pipeline');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return data.records;
   }
 
   // ── Load ──
   async function load() {
-    const pat = getPat();
-    if (!pat) return;
-
     const loading = document.getElementById('loading');
     const errorEl = document.getElementById('error-msg');
     const statsEl = document.getElementById('stats');
@@ -342,7 +263,7 @@
     boardEl.style.display = 'none';
 
     try {
-      const records = await fetchRecords(pat);
+      const records = await fetchRecords();
 
       // Group by category
       const cats = {};
@@ -470,16 +391,7 @@
   }
 
   // ── Init ──
-  if (getPat()) {
-    document.getElementById('pat-modal').classList.add('hidden');
-    load();
-  } else {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('pat-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') submitPat();
-    });
-    document.getElementById('pat-input').focus();
-  }
+  load();
 </script>
 </body>
 </html>
