@@ -267,15 +267,35 @@
 
       // Group by category
       const cats = {};
-      const catOrder = ['BRAND', 'IP', 'BIZ', 'ADMIN', 'OTHER'];
+      // Normalize category names for grouping
+      function normalizeCat(c) {
+        if (!c) return 'OTHER';
+        const s = c.trim();
+        // WD categories
+        if (s.startsWith('WD')) return 'WD';
+        // Brand / IP categories
+        const lower = s.toLowerCase();
+        if (lower.includes('brand') || lower.includes('+') || lower.includes('[ ')) return 'BRAND';
+        if (lower.includes('ip')) return 'IP';
+        return 'OTHER';
+      }
+
+      // Display label for a normalized category
+      function catLabel(norm) {
+        const labels = { BRAND: 'BRAND', IP: 'IP', BIZ: 'BIZ', WD: 'WD', ADMIN: 'ADMIN', OTHER: 'OTHER' };
+        return labels[norm] || norm;
+      }
+
+      const catOrder = ['BRAND', 'IP', 'WD', 'OTHER'];
 
       records.forEach(r => {
         const f = r.fields;
-        const cat = f['Category'] || 'OTHER';
-        if (!cats[cat]) cats[cat] = {};
+        const rawCat = f['Category'] || null;
+        const norm = normalizeCat(rawCat);
+        if (!cats[norm]) cats[norm] = {};
         const status = f['Status'] || 'Not Started';
-        if (!cats[cat][status]) cats[cat][status] = [];
-        cats[cat][status].push({ id: r.id, fields: f });
+        if (!cats[norm][status]) cats[norm][status] = [];
+        cats[norm][status].push({ id: r.id, fields: f, rawCat });
       });
 
       // Stats
@@ -306,7 +326,7 @@
       for (const cat of catOrder) {
         if (!cats[cat]) continue;
         html += `<div class="category">`;
-        html += `<div class="category-title">${cat}</div>`;
+        html += `<div class="category-title">${catLabel(cat)}</div>`;
         html += `<div class="kanban">`;
 
         for (const status of statuses) {
