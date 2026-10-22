@@ -58,6 +58,44 @@ module.exports = async (req, res) => {
     }
   }
 
+  // ── Update a record ──
+  // PATCH /api/pipeline { id: "rec...", fields: { ... } }
+  // Airtable's PATCH merges, so fields not supplied are left alone.
+  if (req.method === 'PATCH') {
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) {
+        return res.status(400).json({ error: 'Invalid JSON body' });
+      }
+    }
+    const { id, fields } = body || {};
+    if (!id || !fields || !Object.keys(fields).length) {
+      return res.status(400).json({ error: 'id and fields are required' });
+    }
+    if (fields.Category && !CATEGORIES.includes(fields.Category)) {
+      return res.status(400).json({
+        error: 'Category must be one of the existing choices',
+        allowed: CATEGORIES
+      });
+    }
+    try {
+      const response = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}/${id}`, {
+        method: 'PATCH',
+        headers: { ...authHeader(pat), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ typecast: true, fields })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        return res.status(response.status).json({
+          error: (data.error && data.error.message) || 'Airtable error'
+        });
+      }
+      return res.status(200).json({ record: data });
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
